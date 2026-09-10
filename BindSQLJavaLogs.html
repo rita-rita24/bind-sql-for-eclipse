@@ -45,23 +45,27 @@
 
     @layer base {
       :root {
-        --bg: oklch(0.98 0.01 250);
+        --bg: #f3f5f8;
         --surface: oklch(1 0 0);
-        --surface-muted: oklch(0.96 0.01 248);
-        --border: oklch(0.84 0.02 250);
-        --text: oklch(0.23 0.02 250);
-        --text-muted: oklch(0.5 0.02 250);
-        --primary: oklch(0.58 0.18 258);
-        --primary-strong: oklch(0.48 0.19 258);
+        --surface-muted: #f8f9fc;
+        --border: #dce2eb;
+        --text: #1d2939;
+        --text-muted: #627086;
+        --primary: #3d5fce;
+        --primary-strong: #304cad;
         --primary-text: oklch(0.99 0.01 250);
-        --good: oklch(0.66 0.16 150);
+        --good: #18764f;
         --warn: oklch(0.71 0.17 40);
         --focus-ring: oklch(0.66 0.12 258 / 40%);
         --sql-keyword: oklch(0.53 0.2 260);
-        --sql-string: oklch(0.64 0.19 56);
-        --sql-number: oklch(0.58 0.17 152);
+        --sql-string: #99561b;
+        --sql-number: #23734f;
         --sql-comment: oklch(0.54 0.03 250);
-        --shadow: 0 18px 44px oklch(0.2 0.02 250 / 10%);
+        --shadow: 0 2px 8px #1d293904, 0 12px 28px #1d293904;
+        --editor-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        --editor-size: 13px;
+        --editor-leading: 1.7;
+        --editor-padding: 16px;
         --mode-switch-track: light-dark(oklch(0.32 0.02 252), oklch(0.33 0.02 252));
         --mode-switch-track-active: light-dark(oklch(0.74 0.11 233), oklch(0.46 0.07 233));
         --mode-switch-moon: light-dark(oklch(0.99 0.003 245), oklch(0.95 0.01 245));
@@ -72,12 +76,12 @@
       }
 
       :root[data-theme="dark"] {
-        --bg: oklch(0.19 0.02 250);
-        --surface: oklch(0.24 0.02 250);
-        --surface-muted: oklch(0.28 0.02 250);
-        --border: oklch(0.38 0.03 250);
-        --text: oklch(0.95 0.01 250);
-        --text-muted: oklch(0.77 0.02 250);
+        --bg: #141923;
+        --surface: #1b2330;
+        --surface-muted: #202a39;
+        --border: #334053;
+        --text: #e6edf7;
+        --text-muted: #a1b0c4;
         --primary: oklch(0.72 0.16 258);
         --primary-strong: oklch(0.78 0.18 258);
         --primary-text: oklch(0.2 0.02 250);
@@ -88,7 +92,7 @@
         --sql-string: oklch(0.82 0.15 62);
         --sql-number: oklch(0.8 0.15 152);
         --sql-comment: oklch(0.69 0.03 250);
-        --shadow: 0 22px 48px oklch(0.05 0.02 250 / 45%);
+        --shadow: 0 2px 8px #00000008, 0 12px 28px #0000000a;
       }
 
       html,
@@ -100,12 +104,9 @@
         display: grid;
         grid-template-rows: auto minmax(0, 1fr);
         overflow: hidden;
-        background:
-          radial-gradient(circle at 10% 10%, oklch(0.86 0.07 250 / 22%), transparent 40%),
-          radial-gradient(circle at 90% 90%, oklch(0.86 0.06 180 / 20%), transparent 42%),
-          var(--bg);
+        background: var(--bg);
         color: var(--text);
-        font-family: "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
         line-height: 1.5;
       }
     }
@@ -113,19 +114,18 @@
     @layer component {
       .app {
         min-height: 0;
-        padding-inline: clamp(0.9rem, 1.7vw, 1.4rem);
-        padding-bottom: clamp(0.9rem, 1.7vw, 1.4rem);
-        padding-top: clamp(0.9rem, 1.7vw, 1.4rem);
+        padding: clamp(12px, 1.8vw, 24px);
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-rows: minmax(0, 1fr);
-        gap: clamp(0.9rem, 1.4vw, 1.2rem);
+        gap: clamp(12px, 1.4vw, 20px);
         overflow: hidden;
 
-        @media (max-width: 980px) {
+        @media (max-width: 760px) {
           grid-template-columns: 1fr;
-          grid-template-rows: minmax(18rem, 45vh) minmax(18rem, 45vh);
+          grid-template-rows: minmax(280px, 44dvh) minmax(280px, 44dvh);
           overflow: auto;
+          overscroll-behavior: contain;
         }
       }
 
@@ -134,50 +134,50 @@
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
-        padding: clamp(0.7rem, 1.8vw, 1rem) clamp(0.7rem, 1.8vw, 1rem) 0;
+        min-height: 64px;
+        padding: 12px clamp(16px, 1.8vw, 24px);
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
       }
 
       .panel {
         display: grid;
-        grid-template-rows: auto 1fr auto;
+        grid-template-rows: auto minmax(0, 1fr);
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 12px;
         overflow: hidden;
         box-shadow: var(--shadow);
         min-height: 0;
-
-        &.panel--output {
-          background: linear-gradient(165deg, var(--surface), var(--surface-muted));
-        }
       }
 
       .panel__header {
-        padding: 0.95rem 1rem;
+        min-height: 74px;
+        padding: 14px 18px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 0.6rem;
         border-bottom: 1px solid var(--border);
-        background: oklch(from var(--surface-muted) l c h / 65%);
+        background: var(--surface-muted);
 
         & .panel__title-wrap {
           display: grid;
-          gap: 0.15rem;
+          gap: 3px;
         }
 
         & .panel__eyebrow {
-          font-size: 0.7rem;
-          letter-spacing: 0.1em;
+          font-size: 10px;
+          letter-spacing: 0.12em;
           text-transform: uppercase;
           color: var(--text-muted);
-          font-weight: 700;
+          font-weight: 600;
         }
 
         & .panel__title {
-          font-size: 0.95rem;
-          font-weight: 700;
+          font-size: 13px;
+          font-weight: 600;
         }
       }
 
@@ -190,7 +190,7 @@
       }
 
       .panel__body {
-        padding: 0.95rem 1rem 1rem;
+        padding: 8px;
         display: grid;
         grid-template-rows: minmax(0, 1fr);
         gap: 0.75rem;
@@ -198,18 +198,9 @@
         min-height: 0;
       }
 
-      .form-label {
-        font-size: 0.78rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--text-muted);
-      }
-
       .field {
         display: grid;
-        grid-template-rows: auto minmax(0, 1fr);
-        gap: 0.35rem;
+        grid-template-rows: minmax(0, 1fr);
         min-height: 0;
         height: 100%;
       }
@@ -218,26 +209,29 @@
         position: relative;
         min-height: 0;
         height: 100%;
-        border: 1px solid var(--border);
-        border-radius: 10px;
+        border: 1px solid transparent;
+        border-radius: 6px;
         background: var(--surface);
         overflow: hidden;
 
         &:focus-within {
           outline: 2px solid var(--focus-ring);
-          outline-offset: 1px;
+          outline-offset: -2px;
         }
       }
 
       .input-editor__highlight {
         position: absolute;
         inset: 0;
-        padding: 0.75rem 0.85rem;
+        padding: var(--editor-padding);
         background: transparent;
         color: var(--text);
-        font-family: "Monaco", "Menlo", "Consolas", monospace;
-        font-size: 0.9rem;
-        line-height: 1.55;
+        font-family: var(--editor-font);
+        font-size: var(--editor-size);
+        line-height: var(--editor-leading);
+        font-weight: 400;
+        font-variant-ligatures: none;
+        tab-size: 2;
         white-space: pre;
         word-break: normal;
         overflow-wrap: normal;
@@ -259,14 +253,17 @@
         field-sizing: fixed;
         border: 0;
         border-radius: 0;
-        padding: 0.75rem 0.85rem;
+        padding: var(--editor-padding);
         background: transparent;
         color: transparent;
         caret-color: var(--text);
         -webkit-text-fill-color: transparent;
-        font-family: "Monaco", "Menlo", "Consolas", monospace;
-        font-size: 0.9rem;
-        line-height: 1.55;
+        font-family: var(--editor-font);
+        font-size: var(--editor-size);
+        line-height: var(--editor-leading);
+        font-weight: 400;
+        font-variant-ligatures: none;
+        tab-size: 2;
         white-space: pre;
         word-break: normal;
         overflow-wrap: normal;
@@ -289,13 +286,16 @@
         min-height: 0;
         height: 100%;
         resize: none;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 0.9rem;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: var(--editor-padding);
         background: var(--surface);
-        font-family: "Monaco", "Menlo", "Consolas", monospace;
-        font-size: 0.9rem;
-        line-height: 1.6;
+        font-family: var(--editor-font);
+        font-size: var(--editor-size);
+        line-height: var(--editor-leading);
+        font-weight: 400;
+        font-variant-ligatures: none;
+        tab-size: 2;
         color: var(--text);
         white-space: pre;
         word-break: normal;
@@ -304,7 +304,7 @@
 
         &:focus-visible {
           outline: 2px solid var(--focus-ring);
-          outline-offset: 1px;
+          outline-offset: -2px;
         }
 
         &::selection {
@@ -313,7 +313,7 @@
       }
 
       .sql-token {
-        font-weight: 600;
+        font-weight: inherit;
       }
 
       .sql-token--keyword {
@@ -330,7 +330,7 @@
 
       .sql-token--comment {
         color: var(--sql-comment);
-        font-style: italic;
+        font-style: normal;
       }
 
       .button {
@@ -339,16 +339,28 @@
         justify-content: center;
         gap: 0.35rem;
         border: 1px solid transparent;
-        border-radius: 999px;
-        padding: 0.45rem 0.9rem;
-        font-size: 0.8rem;
-        font-weight: 700;
+        border-radius: 7px;
+        min-height: 34px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
         cursor: pointer;
         transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
 
         &:focus-visible {
-          outline: 2px solid var(--focus-ring);
-          outline-offset: 1px;
+          outline: 2px solid var(--primary);
+          outline-offset: 3px;
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(1px);
+        }
+
+        &:disabled {
+          background: var(--surface-muted);
+          border-color: var(--border);
+          color: var(--text-muted);
+          cursor: default;
         }
       }
 
@@ -381,10 +393,13 @@
       }
 
       .button--primary {
+        width: 132px;
+        min-width: 132px;
+        white-space: nowrap;
         background: var(--primary);
         color: var(--primary-text);
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: var(--primary-strong);
         }
 
@@ -394,85 +409,33 @@
         }
       }
 
-      .db-select {
-        position: relative;
-        min-height: 2.15rem;
-        display: inline-block;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        background: var(--surface);
-        color: var(--text);
-
-        &::after {
-          content: "";
-          position: absolute;
-          top: 50%;
-          right: 0.75rem;
-          width: 0.45rem;
-          height: 0.45rem;
-          border-right: 2px solid var(--text-muted);
-          border-bottom: 2px solid var(--text-muted);
-          transform: translateY(-70%) rotate(45deg);
-          pointer-events: none;
-        }
-      }
-
-      .db-select__control {
-        min-width: 0;
-        width: 7.4rem;
-        min-height: 2.15rem;
-        border: 0;
-        border-radius: inherit;
-        appearance: none;
-        -webkit-appearance: none;
-        padding: 0 1.35rem 0 0.7rem;
-        background: transparent;
-        color: inherit;
-        font-size: 0.8rem;
-        font-weight: 700;
-        cursor: pointer;
-
-        &:focus-visible {
-          outline: 2px solid var(--focus-ring);
-          outline-offset: 3px;
-        }
-      }
-
       .mode-toggle {
         flex: 0 0 auto;
       }
 
       .app-title {
-        display: inline-flex;
-        align-items: center;
-        min-height: 2.2em;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 0.35rem 0.8rem;
-        background: oklch(from var(--surface) l c h / 88%);
         color: var(--text);
-        font-size: 0.82rem;
+        font-size: 14px;
         font-weight: 600;
-        letter-spacing: 0.02em;
-        box-shadow: 0 0 10px oklch(0 0 0 / 8%);
-        backdrop-filter: blur(2px);
+        letter-spacing: -0.02em;
       }
 
       .switch {
-        font-size: 17px;
+        font-size: 13px;
         position: relative;
         display: inline-block;
         width: 4em;
         height: 2.2em;
         border-radius: 30px;
-        box-shadow: 0 0 10px oklch(0 0 0 / 12%);
         flex-shrink: 0;
       }
 
       .switch input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         opacity: 0;
-        width: 0;
-        height: 0;
       }
 
       .slider {
@@ -553,12 +516,13 @@
       }
 
       .switch input:focus-visible + .slider {
-        outline: 1px solid var(--mode-switch-focus);
+        outline: 2px solid var(--primary);
+        outline-offset: 3px;
       }
 
       .flash {
         position: fixed;
-        top: 1rem;
+        top: 12px;
         left: 50%;
         z-index: 20;
         width: min(92vw, 560px);
@@ -567,8 +531,8 @@
         padding: 0.7rem 0.9rem;
         background: var(--surface);
         color: var(--text);
-        font-size: 0.82rem;
-        font-weight: 700;
+        font-size: 13px;
+        font-weight: 500;
         text-align: center;
         box-shadow: var(--shadow);
         opacity: 0;
@@ -588,6 +552,21 @@
         }
       }
 
+    }
+
+    @media (max-width: 420px) {
+      .panel__header { padding: 12px; gap: 8px; }
+      :root { --editor-padding: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    @media (forced-colors: active) {
+      .textarea { color: CanvasText; -webkit-text-fill-color: CanvasText; }
+      .input-editor__highlight { visibility: hidden; }
+      .input-editor, .output { border-color: CanvasText; }
     }
 
     @layer utility {
@@ -674,7 +653,7 @@
 
       <div class="panel__body">
         <div class="field">
-          <label class="form-label" for="raw-input">貼り付け欄</label>
+          <label class="sr-only" for="raw-input">貼り付け欄</label>
           <div class="input-editor">
             <pre class="input-editor__highlight" data-role="raw-highlight" aria-hidden="true"></pre>
             <textarea
@@ -683,6 +662,9 @@
               data-role="raw-input"
               wrap="off"
               spellcheck="false"
+              autocapitalize="off"
+              autocorrect="off"
+              autocomplete="off"
             ></textarea>
           </div>
         </div>
@@ -697,22 +679,16 @@
           <h2 class="panel__title"><span data-role="database-label">PostgreSQL</span>向け SQL</h2>
         </div>
         <div class="panel__actions">
-          <label class="db-select" for="database-dialect">
-            <span class="sr-only">DB種類</span>
-            <select id="database-dialect" class="db-select__control" data-role="database-dialect" aria-label="DB種類">
-              <option value="postgresql" selected>PostgreSQL</option>
-            </select>
-          </label>
           <button class="button button--primary" type="button" data-action="copy">
             <span class="button__icon" aria-hidden="true">content_copy</span>
-            <span data-role="copy-label">コピー</span>
+            <span data-role="copy-label" aria-live="polite">コピー</span>
           </button>
         </div>
       </header>
 
       <div class="panel__body">
         <div class="field">
-          <label class="form-label" for="sql-output">出力欄</label>
+          <label class="sr-only" for="sql-output">出力欄</label>
           <textarea
             id="sql-output"
             class="output"
@@ -3287,6 +3263,9 @@ WITH
 
       const _copyWithFallback = (_text) => {
         const $temporary = document.createElement("textarea");
+        const $previousFocus = document.activeElement;
+        const _selectionStart = $previousFocus?.selectionStart;
+        const _selectionEnd = $previousFocus?.selectionEnd;
         $temporary.value = _text;
         $temporary.setAttribute("readonly", "true");
         $temporary.style.position = "fixed";
@@ -3294,10 +3273,18 @@ WITH
         $temporary.style.left = "0";
         $temporary.style.opacity = "0";
         document.body.append($temporary);
-        $temporary.select();
-        const _copied = document.execCommand("copy");
-        $temporary.remove();
-        return _copied;
+        try {
+          $temporary.select();
+          return document.execCommand("copy");
+        } catch (_error) {
+          return false;
+        } finally {
+          $temporary.remove();
+          $previousFocus?.focus({ preventScroll: true });
+          if (typeof _selectionStart === "number" && typeof $previousFocus?.setSelectionRange === "function") {
+            $previousFocus.setSelectionRange(_selectionStart, _selectionEnd);
+          }
+        }
       };
 
       const _copyResult = async () => {
@@ -3306,12 +3293,14 @@ WITH
           return;
         }
 
+        const _copiedSql = _state._lastSql;
         try {
-          await navigator.clipboard.writeText(_state._lastSql);
-          _showCopySuccessState();
+          await navigator.clipboard.writeText(_copiedSql);
+          if (_state._lastSql === _copiedSql) _showCopySuccessState();
           return;
         } catch (_error) {
-          const _copied = _copyWithFallback(_state._lastSql);
+          if (_state._lastSql !== _copiedSql) return;
+          const _copied = _copyWithFallback(_copiedSql);
           if (_copied) {
             _showCopySuccessState();
             return;
@@ -3321,8 +3310,20 @@ WITH
         _showFlash(MESSAGES.copyFailed, "error", "copy-failed");
       };
 
+      const _syncActionAvailability = () => {
+        $copyButton.disabled = !_state._lastSql;
+        qs('[data-action="clear"]').disabled = !$rawInput.value;
+      };
+
       const _render = () => {
         const _rawText = $rawInput.value;
+        window.clearTimeout(_state._copyLabelTimer);
+        window.clearTimeout(_state._flashTimer);
+        $copyLabel.textContent = "コピー";
+        $copyButton.classList.remove("is-success");
+        $flash.classList.remove("is-visible");
+        $flash.textContent = "";
+        if (!_rawText) _state._lastFlashKey = "";
         _syncInputHighlight(_rawText);
 
         const _input = _splitInputText(_rawText);
@@ -3333,12 +3334,14 @@ WITH
 
         if (_merged._issues.length > 0) {
           _state._lastSql = "";
+          _syncActionAvailability();
           $output.value = _buildMergeIssueOutput(_merged._issues, _formatted);
           _showFlash(MESSAGES.mergeError(_merged._issues.join(" ")), "error", `merge:${_merged._issues.join("|")}`);
           return;
         }
 
         _state._lastSql = _formatted;
+        _syncActionAvailability();
         _renderOutputText(_formatted);
       };
 
