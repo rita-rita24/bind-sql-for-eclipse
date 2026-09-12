@@ -2478,6 +2478,7 @@ WITH
         _state._hasManualTheme = true;
         _storeTheme(_nextTheme);
         _applyColorScheme(_nextTheme);
+        $lightModeToggle.focus({ preventScroll: true });
       };
 
       const _handleSystemThemeChange = (event) => {
