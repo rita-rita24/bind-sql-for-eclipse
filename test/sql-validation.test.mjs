@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createContext, Script } from 'node:vm';
 
-const html = readFileSync(new URL('../BindSQLForEclipse.html', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../BindSQLForEclipse_PostgreSQL.html', import.meta.url), 'utf8');
 const source = id => html.match(new RegExp(`<script id="${id}"[^>]*>([^]*?)</script>`))[1];
 const binary = Uint8Array.from(Buffer.from(source('postgresql-validator-wasm'), 'base64'));
 

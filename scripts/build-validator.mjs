@@ -13,7 +13,7 @@ const [metadata, loader, binary, worker, licenses, html] = await Promise.all([
   readFile(new URL('wasm/libpg-query.wasm', packageRoot)),
   readFile(new URL('src/sql-validation-worker.js', root), 'utf8'),
   readFile(new URL('THIRD_PARTY_NOTICES.txt', root), 'utf8'),
-  readFile(new URL('BindSQLForEclipse.html', root), 'utf8')
+  readFile(new URL('BindSQLForEclipse_PostgreSQL.html', root), 'utf8')
 ]);
 if (metadata.version !== '15.6.3') throw new Error('Expected libpg-query 15.6.3');
 const hash = createHash('sha256').update(binary).digest('hex');
@@ -34,6 +34,6 @@ const output = html.replace(pattern, () => block);
 if (process.argv.includes('--check')) {
   if (output !== html) throw new Error('Validator bundle is stale; run npm run build:validator');
 } else {
-  await writeFile(new URL('BindSQLForEclipse.html', root), output);
+  await writeFile(new URL('BindSQLForEclipse_PostgreSQL.html', root), output);
   console.log(`Bundled PostgreSQL 15 validator (${binary.length} WASM bytes).`);
 }

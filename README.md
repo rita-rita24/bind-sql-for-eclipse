@@ -2,11 +2,11 @@
 
 EclipseでJavaアプリケーションをデバッグし、SQL実行直前のブレークポイントで確認したSQLとバインド変数を、実行時の内容を確認しやすいSQLへ展開するローカルツールです。PostgreSQL専用です。
 
-`BindSQLForEclipse.html` の単一HTMLだけで動作します。外部CDNや外部APIには依存しません。
+`BindSQLForEclipse_PostgreSQL.html` の単一HTMLだけで動作します。外部CDNや外部APIには依存しません。
 
 ## 使い方
 
-1. `BindSQLForEclipse.html` をブラウザで開きます。
+1. `BindSQLForEclipse_PostgreSQL.html` をブラウザで開きます。
 2. EclipseでSQL実行直前にブレークポイントを設定し、デバッグ実行します。
 3. 停止時に変数の内容を確認し、SQLとバインド変数を左側の入力欄へ貼り付けます。
 4. 右側にPostgreSQL向けSQLがリアルタイムで表示されます。
