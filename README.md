@@ -35,7 +35,7 @@ EclipseでJavaアプリケーションをデバッグし、SQL実行直前のブ
 
 MIT License
 
-同梱する解析器・ランタイムのライセンスは `THIRD_PARTY_NOTICES.txt` に記載しています。単一HTML内にも同じ原文を収録しています。
+ライセンス文はHTMLに埋め込まず、本ツールは `LICENSE`、解析器・ランタイム・アイコンは `THIRD_PARTY_NOTICES.txt` に記載しています。配布時はHTMLと一緒にこの2ファイルを同梱してください。
 
 ## SQLチェックの範囲
 
@@ -63,6 +63,6 @@ npm run build:validator
 npm test
 ```
 
-HTMLの空行・インデント・CSS・JavaScriptの書式は、`npm run format` で統一できます。`npm run format:check` で確認します。埋め込み済みの外部コード・WASM・ライセンス本文はそのまま保持します。
+HTMLの空行・インデント・CSS・JavaScriptの書式は、`npm run format` で統一できます。`npm run format:check` で確認します。埋め込み済みの外部コード・WASMはそのまま保持します。
 
 検査処理は `src/sql-validation-worker-business.js`、組み込み処理は `scripts/build-validator.mjs` です。生成されたHTMLも更新してください。依存ライブラリはビルド時にのみ利用し、利用時のネットワーク接続はCSPでも禁止しています。
