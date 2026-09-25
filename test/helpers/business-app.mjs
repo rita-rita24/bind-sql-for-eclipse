@@ -4,8 +4,8 @@ import { createContext, Script } from 'node:vm';
 export const html = readFileSync(new URL('../../bind-sql-for-eclipse-postgresql.html', import.meta.url), 'utf8');
 export const source = id => html.match(new RegExp(`<script id="${id}"[^>]*>([^]*?)</script>`))[1];
 
-// Run the shipped script, including initialization and document event handlers.
-// Browser services are deterministic substitutes; this is not a browser layout test.
+// 初期化とdocumentのイベントハンドラーを含め、配布するスクリプトを実行する。
+// ブラウザー機能は結果が一定の代替実装を使うため、画面レイアウトは検証しない。
 export function createApp({ clipboard, fallback = true, storage, transformSource = value => value, beforeInit } = {}) {
   const listeners = new Map();
   const timers = new Map();

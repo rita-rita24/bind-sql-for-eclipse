@@ -87,7 +87,7 @@ for (const artifact of ['bind-sql-for-eclipse-postgresql.html']) {
     ['UPDATE t SET (a,b) = (SELECT 1);', 'assignment-count'],
     ['SELECT 1; INSERT INTO t (a,b) VALUES (1);', 'insert-count'],
     ['SELECT 1\0; DROP TABLE t;', 'syntax'],
-    // PostgreSQL 16 allows a FROM subquery without an alias; PostgreSQL 15 does not.
+    // PostgreSQL 16ではFROM内のサブクエリの別名を省略できるが、PostgreSQL 15では省略できない。
     ['SELECT * FROM (SELECT 1);', 'syntax']
   ];
   for (const [sql, code] of invalid) test(`detects ${code}: ${sql}`, async () => {

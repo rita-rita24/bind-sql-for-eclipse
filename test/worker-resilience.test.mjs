@@ -56,8 +56,8 @@ test('malformed worker input does not escape its failure boundary', async () => 
   assert.equal((await validate('SELECT 1')).status, 'checked');
 });
 
-// Exercise parser-tree boundary conditions without asking PostgreSQL to generate
-// enormous SQL. Only the test exposes this otherwise private pure function.
+// 巨大なSQLをPostgreSQLで解析せずに、構文木の境界条件を検証する。
+// 通常は非公開の純粋関数を、テスト時だけ公開する。
 const workerSource = readFileSync(new URL('../src/sql-validation-worker-business.js', import.meta.url), 'utf8');
 const structureContext = createContext({ self: {} });
 new Script(workerSource.replace('  self.onmessage =', '  self.checkStructure = checkStructure;\n  self.onmessage =')).runInContext(structureContext);

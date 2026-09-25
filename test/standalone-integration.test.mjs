@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { createContext, Script } from 'node:vm';
 import { createApp, source } from './helpers/business-app.mjs';
 
-// Execute all three shipped scripts together. DOM/Worker transport is simulated;
-// SQL conversion, controller, transferred binary and PostgreSQL WASM are real.
+// 配布する3つのスクリプトをまとめて実行する。DOMとWorker間の通信は模擬実装を使い、
+// SQL変換・制御処理・転送バイナリ・PostgreSQLのWASMは実物を使う。
 function createStandalone() {
   const workers = [];
   const blobs = new Map();

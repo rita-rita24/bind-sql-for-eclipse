@@ -1,9 +1,9 @@
-/* Runs only in a worker. The PostgreSQL parser reads SQL; it never executes it. */
+/* Worker内でのみ動作する。PostgreSQLの解析器はSQLを解析するだけで、実行はしない。 */
 (() => {
   let modulePromise;
 
-  // Parser errors use one-based Unicode character positions. AST locations use
-  // zero-based UTF-8 byte offsets. Convert both to textarea's UTF-16 offsets.
+  // 解析エラーは1始まりのUnicode文字位置、ASTは0始まりのUTF-8バイト位置を使う。
+  // どちらもtextareaが使うUTF-16の位置に変換する。
   function characterOffset(sql, position) {
     if (!(position > 0)) return null;
     let offset = 0;
@@ -45,8 +45,8 @@
     return first;
   }
 
-  // A top-level wildcard expands to a catalog-dependent number of columns.
-  // count(*) and a scalar subquery containing * each still produce one column.
+  // 最上位のワイルドカードが展開する列数はカタログ情報に依存する。
+  // count(*)や、*を含むスカラーサブクエリの結果は、それぞれ1列として扱う。
   function expandsColumns(expression) {
     return !!(expression?.ColumnRef?.fields?.some(field => field.A_Star) ||
       expression?.A_Indirection?.indirection?.some(field => field.A_Star));
@@ -95,7 +95,7 @@
             add('set-count', `${operation}の左右の列数が一致しません（左${left}列・右${right}列）。`, select.rarg);
           } else if (left !== null && left === right) count = left;
         } else {
-          // PostgreSQL also permits a SELECT with an empty target list.
+          // PostgreSQLでは出力列リストが空のSELECTも許可される。
           count = expressionCount((select.targetList ?? []).map(target => target.ResTarget?.val));
         }
         counts.set(select, count);
@@ -111,8 +111,8 @@
         const target = column.ResTarget;
         if (!target) continue;
         const previous = names.get(target.name);
-        // Separate assignments to fields/array elements of the same column are
-        // legal. A whole-column assignment combined with any other is not.
+        // 同じ列でも、異なるフィールドや配列要素への代入は許可される。
+        // 列全体への代入と、その列への別の代入は併用できない。
         if (previous && (!previous.indirection?.length || !target.indirection?.length)) {
           add('insert-duplicate-column', `INSERTの列「${target.name}」が重複しています。`, column);
         }
@@ -149,7 +149,7 @@
         });
       }
       if (node.SelectStmt) countSelect(node.SelectStmt);
-      // UPDATE's row assignment and INSERT ... ON CONFLICT share this node.
+      // UPDATEの行単位の代入とINSERT ... ON CONFLICTは、このノードを共用する。
       const assignment = node.MultiAssignRef;
       if (assignment?.colno === 1) {
         const source = assignment.source;
@@ -162,7 +162,7 @@
       }
       for (const child of Object.values(node).reverse()) if (child && typeof child === 'object') pending.push(child);
     }
-    // MultiAssignRef repeats its source tree once per assigned column.
+    // MultiAssignRefには、代入先の列ごとに同じ代入元のツリーが現れる。
     const unique = new Map(issues.map(issue => [JSON.stringify(issue), issue]));
     return resolveByteOffsets(sql, [...unique.values()]).sort((a, b) => (a.offset ?? Infinity) - (b.offset ?? Infinity));
   }
@@ -176,7 +176,7 @@
       module.stringToUTF8(sql, queryPointer, size);
       resultPointer = module._wasm_parse_query_raw(queryPointer);
       if (!resultPointer) throw new Error('Could not allocate parse result');
-      // libpg_query 15: {parse_tree, stderr_buffer, error}, each a wasm32 pointer.
+      // libpg_query 15の戻り値は{parse_tree, stderr_buffer, error}で、各値はwasm32ポインター。
       const errorPointer = module.getValue(resultPointer + 8, 'i32');
       if (errorPointer) {
         return { issues: [{
@@ -198,8 +198,8 @@
     const { id, sql, wasmBinary } = event?.data ?? {};
     try {
       if (!Number.isSafeInteger(id) || typeof sql !== 'string') throw new TypeError('Invalid parser request');
-      // The binary is transferred only once, including when the first input
-      // contains NUL or has no SQL. Retain initialization for subsequent edits.
+      // 初回の入力がNULを含む場合やSQLがない場合も、バイナリの転送は一度だけ行う。
+      // 次回の編集でも使えるように初期化状態を保持する。
       modulePromise ??= PgQueryModule({ wasmBinary });
       const module = await modulePromise;
       if (/^[ \t\r\n\f]*$/.test(sql)) {
@@ -220,7 +220,7 @@
         issues
       });
     } catch (_error) {
-      // Runtime/initialization failures must never be presented as valid SQL.
+      // 実行環境や初期化の失敗を、SQLの検証成功として表示してはいけない。
       self.postMessage({ id, status: 'unavailable', issues: [] });
     }
   };

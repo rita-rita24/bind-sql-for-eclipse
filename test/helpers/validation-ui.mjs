@@ -1,6 +1,6 @@
 import { createContext, Script } from 'node:vm';
 
-// A small DOM/Worker boundary exercises the shipped UI controller unchanged.
+// 最小限のDOMとWorkerの模擬実装で、配布するUI制御処理をそのまま検証する。
 export function createValidationUI(script) {
   class Element {
     constructor() { this.dataset = {}; this.attributes = {}; this.children = []; this.textContent = ''; }
