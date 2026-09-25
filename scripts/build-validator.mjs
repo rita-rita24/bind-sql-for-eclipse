@@ -5,15 +5,22 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const root = new URL('../', import.meta.url);
+const targetIndex = process.argv.indexOf('--target');
+const targetName = targetIndex < 0 ? 'bind-sql-for-eclipse-postgresql.html' : process.argv[targetIndex + 1];
+if (targetName !== 'bind-sql-for-eclipse-postgresql.html') {
+  throw new Error('Expected --target bind-sql-for-eclipse-postgresql.html');
+}
+const target = new URL(targetName, root);
+const workerPath = 'src/sql-validation-worker-business.js';
 const packagePath = require.resolve('libpg-query/package.json');
 const packageRoot = new URL('./', pathToFileURL(packagePath));
 const [metadata, loader, binary, worker, licenses, html] = await Promise.all([
   readFile(packagePath, 'utf8').then(JSON.parse),
   readFile(new URL('wasm/libpg-query.js', packageRoot), 'utf8'),
   readFile(new URL('wasm/libpg-query.wasm', packageRoot)),
-  readFile(new URL('src/sql-validation-worker.js', root), 'utf8'),
+  readFile(new URL(workerPath, root), 'utf8'),
   readFile(new URL('THIRD_PARTY_NOTICES.txt', root), 'utf8'),
-  readFile(new URL('BindSQLForEclipse_PostgreSQL.html', root), 'utf8')
+  readFile(target, 'utf8')
 ]);
 if (metadata.version !== '15.6.3') throw new Error('Expected libpg-query 15.6.3');
 const hash = createHash('sha256').update(binary).digest('hex');
@@ -32,8 +39,8 @@ const pattern = /<!-- BEGIN POSTGRESQL VALIDATOR[^]*?<!-- END POSTGRESQL VALIDAT
 if (!pattern.test(html)) throw new Error('Missing validator bundle markers');
 const output = html.replace(pattern, () => block);
 if (process.argv.includes('--check')) {
-  if (output !== html) throw new Error('Validator bundle is stale; run npm run build:validator');
+  if (output !== html) throw new Error(`Validator bundle is stale; run npm run build:validator -- --target ${targetName}`);
 } else {
-  await writeFile(new URL('BindSQLForEclipse_PostgreSQL.html', root), output);
-  console.log(`Bundled PostgreSQL 15 validator (${binary.length} WASM bytes).`);
+  await writeFile(target, output);
+  console.log(`Bundled PostgreSQL 15 validator in ${targetName} (${binary.length} WASM bytes).`);
 }

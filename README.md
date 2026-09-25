@@ -2,11 +2,11 @@
 
 EclipseでJavaアプリケーションをデバッグし、SQL実行直前のブレークポイントで確認したSQLとバインド変数を、実行時の内容を確認しやすいSQLへ展開するローカルツールです。PostgreSQL専用です。
 
-`BindSQLForEclipse_PostgreSQL.html` の単一HTMLだけで動作します。外部CDNや外部APIには依存しません。
+`bind-sql-for-eclipse-postgresql.html` の単一HTMLだけで動作します。外部CDNや外部APIには依存しません。
 
 ## 使い方
 
-1. `BindSQLForEclipse_PostgreSQL.html` をブラウザで開きます。
+1. `bind-sql-for-eclipse-postgresql.html` をブラウザで開きます。
 2. EclipseでSQL実行直前にブレークポイントを設定し、デバッグ実行します。
 3. 停止時に変数の内容を確認し、SQLとバインド変数を左側の入力欄へ貼り付けます。
 4. 右側にPostgreSQL向けSQLがリアルタイムで表示されます。
@@ -63,4 +63,4 @@ npm run build:validator
 npm test
 ```
 
-検査処理は `src/sql-validation-worker.js`、組み込み処理は `scripts/build-validator.mjs` です。生成されたHTMLも更新してください。依存ライブラリはビルド時にのみ利用し、利用時のネットワーク接続はCSPでも禁止しています。
+検査処理は `src/sql-validation-worker-business.js`、組み込み処理は `scripts/build-validator.mjs` です。生成されたHTMLも更新してください。依存ライブラリはビルド時にのみ利用し、利用時のネットワーク接続はCSPでも禁止しています。

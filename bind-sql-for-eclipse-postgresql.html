@@ -1,705 +1,1070 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="gm" data-mode="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; worker-src blob:; style-src 'unsafe-inline'; img-src data:; font-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
   <title>BindSQL for Eclipse — PostgreSQL専用</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f97316'/%3E%3Cpath d='M16 20c0-4.4 7.2-8 16-8s16 3.6 16 8-7.2 8-16 8-16-3.6-16-8Zm0 10c0 4.4 7.2 8 16 8s16-3.6 16-8v8c0 4.4-7.2 8-16 8s-16-3.6-16-8v-8Zm0 18c0 4.4 7.2 8 16 8s16-3.6 16-8v-8c0 4.4-7.2 8-16 8s-16-3.6-16-8v8Z' fill='%23fff7ed'/%3E%3C/svg%3E" />
-  <style>
-    @font-face {
-      font-family: "Material Symbols Rounded";
-      font-style: normal;
-      font-weight: 500;
-      src: url("data:font/truetype;base64,AAEAAAAOAIAAAwBgR1NVQiNSLB0AAAMcAAAAok9TLzJhzEfXAAACQAAAAGBTVEFUe/xrrAAAAeAAAABeY21hcOOL4zgAAAKgAAAAfGdhc3AAAAAQAAAA9AAAAAhnbHlmgeGjfAAABhwAAAT8aGVhZC8wwgQAAAGoAAAANmhoZWEH5gcLAAABhAAAACRobXR4BlMCfQAAATwAAAAibG9jYQyMC5QAAAFgAAAAIm1heHAAMwFuAAAA/AAAACBuYW1lNSFeEQAAA8AAAAJacG9zdAADAAEAAAEcAAAAIHByZXBoBoyFAAAA7AAAAAe4Af+FsASNAAABAAH//wAPAAEAAAAQAW0AIgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAPAAMgAggCEAAAAAABtAEAAbQBtAG0ARQBtADgALwAHAC4AAAAAACcAdwDfAN8A+gEuAWcBfQGZAbQB3gIDAkQCVgJyAn4AAAABAAAEIP+gAAADwP/t/+oD1gPAAAAAAAAAAAAAAAAAAAAAAQABAAAAAvCkl2DCzF8PPPUAAgPAAAAAAOYqrpAAAAAA5ireoP/t/6UD1gPQAAAABgACAAAAAAAAAAEAAQAIAAQAAAAUAAMAAAA0AAJGSUxMAQAAAEdSQUQBAQABb3BzegECAAJ3Z2h0AQMAAwAeABIABgABAAMAAAEHAfQAAAABAAEAAgEKAAAAAAABAAAAAgEKAAAAAAAAAAQDwAH0AAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCgEDAQICAgICAAAAARAAAAAAAAAAAAAAAEdPT0cAwAAg4U0EIP+gAAAEJgBbAAAAAQAAAAADwAPAAAAAIAArAAAAAgAAAAMAAAAUAAMAAQAAABQABABoAAAAFgAQAAMABgAgAF8AYwBlAGsAcAB0AHnhSuFN//8AAAAgAF8AYQBlAGsAbgBzAHnhSuFN////4/+w/6P/ov+d/5v/mf+VHrgetAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAACgAkADIAAkRGTFQADmxhdG4ADgAEAAAAAP//AAEAAAABcmxpZwAIAAAAAQAAAAEABAAHAAAAAgA4AAoAAQAEAAAACAABACAAAQAIAAEABAACAAkABAAGAAgADAALAAQABgAHAAEAAQAFAAEABAAAAAgAAQAmAAEACAABAAQAAQAMAAoACQANAAcACQANAA8ABgAKAAsADgABAAEABgAAAAAADQCiAAMAAQQJAAAAYAFYAAMAAQQJAAEASAEQAAMAAQQJAAIADgECAAMAAQQJAAMAWACqAAMAAQQJAAQASAEQAAMAAQQJAAUAGgCQAAMAAQQJAAYAQgBOAAMAAQQJAQAACABGAAMAAQQJAQEACgA8AAMAAQQJAQIAGAAkAAMAAQQJAQMADAAYAAMAAQQJAQcADAAMAAMAAQQJAQoADAAAAE4AbwByAG0AYQBsAE0AZQBkAGkAdQBtAFcAZQBpAGcAaAB0AE8AcAB0AGkAYwBhAGwAIABTAGkAegBlAEcAcgBhAGQAZQBGAGkAbABsAE0AYQB0AGUAcgBpAGEAbABTAHkAbQBiAG8AbABzAFIAbwB1AG4AZABlAGQAMgAwAHAAdAAtAE0AZQBkAGkAdQBtAFYAZQByAHMAaQBvAG4AIAAyAC4AOQA0ADAAMgAuADkANAAwADsARwBPAE8ARwA7AE0AYQB0AGUAcgBpAGEAbABTAHkAbQBiAG8AbABzAFIAbwB1AG4AZABlAGQAMgAwAHAAdAAtAE0AZQBkAGkAdQBtAFIAZQBnAHUAbABhAHIATQBhAHQAZQByAGkAYQBsACAAUwB5AG0AYgBvAGwAcwAgAFIAbwB1AG4AZABlAGQAIAAyADAAcAB0ACAATQBlAGQAaQB1AG0AQwBvAHAAeQByAGkAZwBoAHQAIAAyADAAMgA2ACAARwBvAG8AZwBsAGUAIABMAEwAQwAuACAAIABBAGwAbAAgAFIAaQBnAGhAdABzACAAUgBlAHMAZQByAHYAZQBkAC4AAAAFAMgAAAL5A8AAAwAGAAkADAAPAAAzESERJRMDAREDAyEDNRMhyAIx/iCxsQGPscgBY7Gv/qEDwPxAfgFjAWT9OQLH/p7+bgFjWgFiAAAEAIIAUgM+A24ADwAfADQARAAAJSImNRE0NjMhMhYVERQGIyUhMDAxETAwMSEwMDERMDAHIiY1ETQ2MhYVETAwMSEyFhUUBiMlMDAxETAwMTEwMDERMDAxAXAiMTEiAXsiMTEi/oUBe/6FmyIxGCMYAaQSGBgS/vftMSIB2yIxMSL+JSIxUwHb/iXuMSICBBIYGBL9/BgRERnuAdv+JQAABACEALgDaAMIABsALwBDAFcAAAEXFjY2NCcnNzY0JiIHBycmIgYUFxcHBhQWMjcHIiYnJyY0Nzc2NjMhMhYVERQGIyUhMDAxETAwMSEwMDEHMDAxFzAwNzAwMTEwMDExMDAxMTAwMTEwMDECQEELHhYLQUELFh4LQUALHhYLQEALFh4LiRQjDJ8REZ8MIxQBniMwMCP+YQGf/mGfn4ABrEELARYeC0BBCx4WC0FBCxYeC0FBCx0WC7QRENYXNBfWEBEwI/5WIzBTAarV1dUAAAIAAAAAA70CrwAGAAoAADEBMwEjAQE3NyEXAa1lAatq/on+iDgsAiotAq/9UQJv/ZGxTEwAAAMAbQAAA28CqwAPABgAIQAAMxEhMhYVFAYHFRYWFRQGIyUhMjY1NCYjITUhMjY1NCYjIW0B9VugQC04R6Be/lQBrFFUVFH+VAGdUU9PUf5jAqtJbDlFEAEPUENsWUlEODlASjszNjUAAQBA//EDiwK4ACcAAAUiLgI1ND4CMzIeAhcjLgMjIg4CFRQWMzI+AjczDgMB+FSfe0pKe59UO4JzVQ5aDUhcYSdAfWM914YiZ2JKBFoGVnmIDytZhlpbhVgrFDNYRS06Iw0kRmhEj4cNITwuRVozFAAAAQBtAAADkAKrAAsAADMRIRUhFSEVIRUhFW0DG/0/Amz9lALJAqtL20rySQACAG0AAAPAAqsABwALAAAzETMRATMBFSEBNwFtWgJKi/0rAm3+REgCAAKr/l8Bof4LtgFsLf5nAAEAbQAAA1MCqwANAAAzETMBMycRMxEjASMXEW1eAjIEBFZf/dEEAgKr/b4/AgP9VQI/QP4BAAIARf/xA3wCuAANABsAAAUiJjU1NDYzMhYVFRQGJzI2NTU0JiMiBhUVFBYB4aj09Kin9PSnhLy8hIa7vA+lthG2pae0EbSnTn6PEY9/fpARkH0AAAIAbQAAA5ECqwANABUAADMRITIeAhQOAiMhEREhMjY0JiMhbQIFMmZSNTRTZjL+VQGrRIGDQv5VAqsVMFB2UDAV/vUBVTOmMgAAAQA4//EDjAK4AC8AAAUiJjU1MxUUFjMyNjU0LgInLgM1NDYzMhYVFSM1NCYjIgYVFB4CFxYWFRQGAeW0+VqpqqStaId+Fy56bUyz2fKoW5Wqo5BObHMlycfeD1ZzBgY/PDYzJTMhEwQIFCpMP1Bfb1YGBkE3LjgaKR8VBiBZZ1xbAAEALwAAA5ECqwAHAAAhESE1IRUhEQG0/nsDYv59AmBLS/2gAAEABwAAA7kCqwALAAAhEQEzARczNwEzAREBsv5VggEmMgQzASd6/lUBAAGr/tE/PwEv/lX/AAAAAQAu/6UDkv/wAAMAABc1IRUuA2RbS0s=") format("truetype");
-    }
-
-    @layer reset, base, component, utility;
-
-    @layer reset {
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-
-      html,
-      body,
-      h1,
-      h2,
-      p,
-      pre,
-      textarea,
-      button,
-      select {
-        margin: 0;
-      }
-
-      button,
-      textarea,
-      select {
-        font: inherit;
-        color: inherit;
-      }
-    }
-
-    @layer base {
-      :root {
-        --bg: #f3f5f8;
-        --surface: oklch(1 0 0);
-        --surface-muted: #f8f9fc;
-        --border: #dce2eb;
-        --text: #1d2939;
-        --text-muted: #627086;
-        --primary: #3d5fce;
-        --primary-strong: #304cad;
-        --primary-text: oklch(0.99 0.01 250);
-        --good: #18764f;
-        --warn: oklch(0.71 0.17 40);
-        --focus-ring: oklch(0.66 0.12 258 / 40%);
-        --sql-keyword: oklch(0.53 0.2 260);
-        --sql-string: #99561b;
-        --sql-number: #23734f;
-        --sql-comment: oklch(0.54 0.03 250);
-        --shadow: 0 2px 8px #1d293904, 0 12px 28px #1d293904;
-        --editor-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        --editor-size: 13px;
-        --editor-leading: 1.7;
-        --editor-padding: 16px;
-        --mode-switch-track: light-dark(oklch(0.32 0.02 252), oklch(0.33 0.02 252));
-        --mode-switch-track-active: light-dark(oklch(0.74 0.11 233), oklch(0.46 0.07 233));
-        --mode-switch-moon: light-dark(oklch(0.99 0.003 245), oklch(0.95 0.01 245));
-        --mode-switch-sun: light-dark(oklch(0.88 0.14 90), oklch(0.86 0.12 90));
-        --mode-switch-star: light-dark(oklch(0.97 0.01 245), oklch(0.96 0.01 245));
-        --mode-switch-cloud: light-dark(oklch(0.99 0.003 245), oklch(0.99 0.003 245));
-        --mode-switch-focus: light-dark(oklch(0.62 0.11 205), oklch(0.74 0.085 205));
-      }
-
-      :root[data-theme="dark"] {
-        --bg: #141923;
-        --surface: #1b2330;
-        --surface-muted: #202a39;
-        --border: #334053;
-        --text: #e6edf7;
-        --text-muted: #a1b0c4;
-        --primary: oklch(0.72 0.16 258);
-        --primary-strong: oklch(0.78 0.18 258);
-        --primary-text: oklch(0.2 0.02 250);
-        --good: oklch(0.78 0.17 150);
-        --warn: oklch(0.8 0.16 45);
-        --focus-ring: oklch(0.72 0.15 258 / 36%);
-        --sql-keyword: oklch(0.78 0.16 261);
-        --sql-string: oklch(0.82 0.15 62);
-        --sql-number: oklch(0.8 0.15 152);
-        --sql-comment: oklch(0.69 0.03 250);
-        --shadow: 0 2px 8px #00000008, 0 12px 28px #0000000a;
-      }
-
-      html,
-      body {
-        height: 100%;
-      }
-
-      body {
-        display: grid;
-        grid-template-rows: auto minmax(0, 1fr);
-        overflow: hidden;
-        background: var(--bg);
-        color: var(--text);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
-        line-height: 1.5;
-      }
-    }
-
-    @layer component {
-      .app {
-        min-height: 0;
-        padding: clamp(12px, 1.8vw, 24px);
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        grid-template-rows: minmax(0, 1fr);
-        gap: clamp(12px, 1.4vw, 20px);
-        overflow: hidden;
-
-        @media (max-width: 760px) {
-          grid-template-columns: 1fr;
-          grid-template-rows: minmax(280px, 44dvh) minmax(280px, 44dvh);
-          overflow: auto;
-          overscroll-behavior: contain;
-        }
-      }
-
-      .app-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-        min-height: 64px;
-        padding: 12px clamp(16px, 1.8vw, 24px);
-        border-bottom: 1px solid var(--border);
-        background: var(--surface);
-      }
-
-      .panel {
-        display: grid;
-        grid-template-rows: auto minmax(0, 1fr);
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-        min-height: 0;
-      }
-
-      .panel__header {
-        min-height: 74px;
-        padding: 14px 18px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-        border-bottom: 1px solid var(--border);
-        background: var(--surface-muted);
-
-        & .panel__title-wrap {
-          display: grid;
-          gap: 3px;
-        }
-
-        & .panel__eyebrow {
-          font-size: 10px;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          font-weight: 600;
-        }
-
-        & .panel__title {
-          font-size: 13px;
-          font-weight: 600;
-        }
-      }
-
-      .panel__actions {
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 0.5rem;
-        margin-left: auto;
-      }
-
-      .panel__body {
-        padding: 8px;
-        display: grid;
-        grid-template-rows: minmax(0, 1fr);
-        gap: 0.75rem;
-        align-content: stretch;
-        min-height: 0;
-      }
-
-      .panel--output { grid-template-rows: auto minmax(0, 1fr) auto; }
-
-      .validation {
-        max-height: min(160px, 22dvh);
-        overflow: auto;
-        border-top: 1px solid var(--border);
-        padding: 10px 16px;
-        font-size: 12px;
-        background: var(--surface-muted);
-        overflow-wrap: anywhere;
-      }
-
-      .validation[hidden], .validation__issues[hidden] { display: none; }
-      .validation__status { font-weight: 600; }
-      .validation__issues { margin: 8px 0 0; padding-left: 20px; }
-      .validation__issues li + li { margin-top: 6px; }
-      .validation[data-status="error"] .validation__status { color: light-dark(#a43b27, #ffb29d); }
-      .validation__location {
-        display: inline;
-        border: 0;
-        padding: 0;
-        background: transparent;
-        color: var(--primary);
-        text-decoration: underline;
-        text-underline-offset: 2px;
-        cursor: pointer;
-      }
-      .validation__location:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-
-      .field {
-        display: grid;
-        grid-template-rows: minmax(0, 1fr);
-        min-height: 0;
-        height: 100%;
-      }
-
-      .input-editor {
-        position: relative;
-        min-height: 0;
-        height: 100%;
-        border: 1px solid transparent;
-        border-radius: 6px;
-        background: var(--surface);
-        overflow: hidden;
-
-        &:focus-within {
-          outline: 2px solid var(--focus-ring);
-          outline-offset: -2px;
-        }
-      }
-
-      .input-editor__highlight {
-        position: absolute;
-        inset: 0;
-        padding: var(--editor-padding);
-        background: transparent;
-        color: var(--text);
-        font-family: var(--editor-font);
-        font-size: var(--editor-size);
-        line-height: var(--editor-leading);
-        font-weight: 400;
-        font-variant-ligatures: none;
-        tab-size: 2;
-        white-space: pre;
-        word-break: normal;
-        overflow-wrap: normal;
-        overflow: auto;
-        pointer-events: none;
-        scrollbar-width: none;
-
-        &::-webkit-scrollbar {
-          width: 0;
-          height: 0;
-        }
-      }
-
-      .textarea {
-        width: 100%;
-        min-height: 0;
-        height: 100%;
-        resize: none;
-        field-sizing: fixed;
-        border: 0;
-        border-radius: 0;
-        padding: var(--editor-padding);
-        background: transparent;
-        color: transparent;
-        caret-color: var(--text);
-        -webkit-text-fill-color: transparent;
-        font-family: var(--editor-font);
-        font-size: var(--editor-size);
-        line-height: var(--editor-leading);
-        font-weight: 400;
-        font-variant-ligatures: none;
-        tab-size: 2;
-        white-space: pre;
-        word-break: normal;
-        overflow-wrap: normal;
-        overflow: auto;
-        position: relative;
-        z-index: 1;
-
-        &:focus-visible {
-          outline: none;
-        }
-
-        &::selection {
-          background: oklch(from var(--primary) l c h / 28%);
-        }
-      }
-
-      .output {
-        display: block;
-        width: 100%;
-        min-height: 0;
-        height: 100%;
-        resize: none;
-        border: 1px solid transparent;
-        border-radius: 6px;
-        padding: var(--editor-padding);
-        background: var(--surface);
-        font-family: var(--editor-font);
-        font-size: var(--editor-size);
-        line-height: var(--editor-leading);
-        font-weight: 400;
-        font-variant-ligatures: none;
-        tab-size: 2;
-        color: var(--text);
-        white-space: pre;
-        word-break: normal;
-        overflow-wrap: normal;
-        overflow: auto;
-
-        &:focus-visible {
-          outline: 2px solid var(--focus-ring);
-          outline-offset: -2px;
-        }
-
-        &::selection {
-          background: oklch(from var(--primary) l c h / 28%);
-        }
-      }
-
-      .sql-token {
-        font-weight: inherit;
-      }
-
-      .sql-token--keyword {
-        color: var(--sql-keyword);
-      }
-
-      .sql-token--string {
-        color: var(--sql-string);
-      }
-
-      .sql-token--number {
-        color: var(--sql-number);
-      }
-
-      .sql-token--comment {
-        color: var(--sql-comment);
-        font-style: normal;
-      }
-
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.35rem;
-        border: 1px solid transparent;
-        border-radius: 7px;
-        min-height: 34px;
-        padding: 6px 12px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
-
-        &:focus-visible {
-          outline: 2px solid var(--primary);
-          outline-offset: 3px;
-        }
-
-        &:active:not(:disabled) {
-          transform: translateY(1px);
-        }
-
-        &:disabled {
-          background: var(--surface-muted);
-          border-color: var(--border);
-          color: var(--text-muted);
-          cursor: default;
-        }
-      }
-
-      .button__icon {
-        width: 1rem;
-        height: 1rem;
-        flex: 0 0 auto;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Material Symbols Rounded";
-        font-style: normal;
-        font-weight: 500;
-        font-size: 1rem;
-        line-height: 1;
-        font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 20;
-        font-feature-settings: "liga";
-        text-transform: none;
-        vertical-align: middle;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      .button--ghost {
-        background: var(--surface);
-        border-color: var(--border);
-
-        &:hover {
-          background: var(--surface-muted);
-        }
-      }
-
-      .button--primary {
-        width: 132px;
-        min-width: 132px;
-        white-space: nowrap;
-        background: var(--primary);
-        color: var(--primary-text);
-
-        &:hover:not(:disabled) {
-          background: var(--primary-strong);
-        }
-
-        &.is-success,
-        &.is-success:hover {
-          background: var(--good);
-        }
-      }
-
-      .mode-toggle {
-        flex: 0 0 auto;
-      }
-
-      .app-title {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px 12px;
-        color: var(--text);
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-      }
-
-      .app-title__database {
-        color: var(--text-muted);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0;
-        white-space: nowrap;
-      }
-
-      .switch {
-        font-size: 13px;
-        position: relative;
-        display: inline-block;
-        width: 4em;
-        height: 2.2em;
-        border-radius: 30px;
-        flex-shrink: 0;
-      }
-
-      .switch input {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-      }
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        inset: 0;
-        background-color: var(--mode-switch-track);
-        transition: 0.4s;
-        border-radius: 30px;
-        overflow: hidden;
-      }
-
-      .slider::before {
-        position: absolute;
-        content: "";
-        height: 1.2em;
-        width: 1.2em;
-        border-radius: 20px;
-        left: 0.5em;
-        bottom: 0.5em;
-        transition: 0.4s;
-        transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
-        box-shadow: inset 8px -4px 0 0 var(--mode-switch-moon);
-      }
-
-      .switch input:checked + .slider {
-        background-color: var(--mode-switch-track-active);
-      }
-
-      .switch input:checked + .slider::before {
-        transform: translateX(1.8em);
-        box-shadow: inset 15px -4px 0 15px var(--mode-switch-sun);
-      }
-
-      .star {
-        background-color: var(--mode-switch-star);
-        border-radius: 50%;
-        position: absolute;
-        width: 5px;
-        height: 5px;
-        transition: all 0.4s;
-      }
-
-      .star_1 {
-        left: 2.5em;
-        top: 0.5em;
-      }
-
-      .star_2 {
-        left: 2.2em;
-        top: 1.2em;
-      }
-
-      .star_3 {
-        left: 3em;
-        top: 0.9em;
-      }
-
-      .switch input:checked ~ .slider .star {
-        opacity: 0;
-      }
-
-      .cloud {
-        width: 3.5em;
-        position: absolute;
-        bottom: -1.4em;
-        left: -1.1em;
-        opacity: 0;
-        transition: all 0.4s;
-      }
-
-      .cloud path {
-        fill: var(--mode-switch-cloud);
-      }
-
-      .switch input:checked ~ .slider .cloud {
-        opacity: 1;
-      }
-
-      .switch input:focus-visible + .slider {
-        outline: 2px solid var(--primary);
-        outline-offset: 3px;
-      }
-
-      .flash {
-        position: fixed;
-        top: 12px;
-        left: 50%;
-        z-index: 20;
-        width: min(92vw, 560px);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 0.7rem 0.9rem;
-        background: var(--surface);
-        color: var(--text);
-        font-size: 13px;
-        font-weight: 500;
-        text-align: center;
-        box-shadow: var(--shadow);
-        opacity: 0;
-        transform: translate(-50%, -10px);
-        pointer-events: none;
-        transition: opacity 180ms ease, transform 180ms ease;
-
-        &[data-type="error"] {
-          border-color: var(--warn);
-          background: oklch(from var(--warn) 0.95 0.04 h);
-          color: oklch(0.3 0.08 45);
-        }
-
-        &.is-visible {
-          opacity: 1;
-          transform: translate(-50%, 0);
-        }
-      }
-
-    }
-
-    @media (max-width: 420px) {
-      .panel__header { padding: 12px; gap: 8px; }
-      :root { --editor-padding: 12px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition: none !important; }
-    }
-
-    @media (forced-colors: active) {
-      .textarea { color: CanvasText; -webkit-text-fill-color: CanvasText; }
-      .input-editor__highlight { visibility: hidden; }
-      .input-editor, .output { border-color: CanvasText; }
-    }
-
-    @layer utility {
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-    }
-
-    @media print {
-      .mode-toggle,
-      .app-title,
-      .flash,
-      .panel:not(.panel--output) {
-        display: none !important;
-      }
-
-      body {
-        background: #fff;
-        color: #000;
-        padding: 0;
-      }
-
-      main {
-        display: block;
-      }
-
-      .panel--output {
-        box-shadow: none;
-        border: 1px solid #999;
-        background: #fff;
-      }
-
-      .output {
-        color: #000;
-        background: #fff;
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 10pt;
-        white-space: pre-wrap;
-      }
-    }
+  <style id="gyomu-ui-styles">
+/*! 業務UI / GYOMU-UI 0.6.1 — この単一HTMLに内包する共通スタイル。
+ * 外部スタイルシートの読み込みは不要。
+ * 利用するアイコンは本文のインラインSVGとして内包。
+ * 第三者アイコンの出典とライセンス全文は、このstyle要素の末尾に保持。
+ */
+
+/* tokens.css */
+/* Project-owned tokens. Unmarked nested .gm scopes inherit the surrounding colors. */
+/* BEGIN GENERATED COLORS — scripts/build-tokens.cjs */
+.gm:where(:not(.gm .gm)), .gm[data-mode="light"] {
+  color-scheme: light;
+  --gm-on-brand: #ffffff;
+  --gm-text: #252b33;
+  --gm-muted: #55616f;
+  --gm-surface: #ffffff;
+  --gm-background: #f5f6f8;
+  --gm-border: #d5dae1;
+  --gm-input-border: #788391;
+  --gm-success: #19603e;
+  --gm-success-bg: #edf7f1;
+  --gm-warning: #775000;
+  --gm-warning-bg: #fff6df;
+  --gm-error: #aa2424;
+  --gm-error-bg: #fff0f0;
+  --gm-on-error: #ffffff;
+  --gm-backdrop: rgb(0 0 0 / .4);
+  --gm-brand: var(--gm-light-brand, #174da7);
+  --gm-brand-hover: var(--gm-light-brand-hover, #133f89);
+  --gm-brand-soft: var(--gm-light-brand-soft, #eff3f9);
+  --gm-focus: var(--gm-light-focus, #174da7);
+}
+.gm[data-mode="dark"] {
+  color-scheme: dark;
+  --gm-on-brand: #131922;
+  --gm-text: #e7ebf0;
+  --gm-muted: #b4bdc9;
+  --gm-surface: #1c232d;
+  --gm-background: #131922;
+  --gm-border: #414d5d;
+  --gm-input-border: #8b98a9;
+  --gm-success: #83d6a5;
+  --gm-success-bg: #183329;
+  --gm-warning: #ebc26d;
+  --gm-warning-bg: #362c18;
+  --gm-error: #ffaaaa;
+  --gm-error-bg: #3d2428;
+  --gm-on-error: #131922;
+  --gm-backdrop: rgb(0 0 0 / .65);
+  --gm-brand: var(--gm-dark-brand, #abbfdf);
+  --gm-brand-hover: var(--gm-dark-brand-hover, #b5c7e3);
+  --gm-brand-soft: var(--gm-dark-brand-soft, #263347);
+  --gm-focus: var(--gm-dark-focus, #abbfdf);
+}
+@media print {
+.gm {
+  color-scheme: light !important;
+  --gm-on-brand: #ffffff !important;
+  --gm-text: #252b33 !important;
+  --gm-muted: #55616f !important;
+  --gm-surface: #ffffff !important;
+  --gm-background: #f5f6f8 !important;
+  --gm-border: #d5dae1 !important;
+  --gm-input-border: #788391 !important;
+  --gm-success: #19603e !important;
+  --gm-success-bg: #edf7f1 !important;
+  --gm-warning: #775000 !important;
+  --gm-warning-bg: #fff6df !important;
+  --gm-error: #aa2424 !important;
+  --gm-error-bg: #fff0f0 !important;
+  --gm-on-error: #ffffff !important;
+  --gm-backdrop: rgb(0 0 0 / .4) !important;
+  --gm-brand: var(--gm-light-brand, #174da7) !important;
+  --gm-brand-hover: var(--gm-light-brand-hover, #133f89) !important;
+  --gm-brand-soft: var(--gm-light-brand-soft, #eff3f9) !important;
+  --gm-focus: var(--gm-light-focus, #174da7) !important;
+}
+}
+/* END GENERATED COLORS */
+.gm {
+  --gm-font: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --gm-text-size: .875rem;
+  --gm-label-size: .8125rem;
+  --gm-meta-size: .75rem;
+  --gm-space-1: .25rem;
+  --gm-space-2: .5rem;
+  --gm-space-3: .75rem;
+  --gm-space-4: 1rem;
+  --gm-space-5: 1.5rem;
+  --gm-space-6: 2rem;
+  --gm-space-7: 3rem;
+  --gm-radius: .25rem;
+  --gm-control-height: 1.75rem;
+  --gm-control-padding-block: .125rem;
+  --gm-control-padding-inline: .5rem;
+  --gm-control-xs-height: 1.5rem;
+  --gm-control-xs-text-size: .8125rem;
+  --gm-control-xs-line-height: 1.125rem;
+  --gm-choice-size: 1rem;
+  --gm-choice-target: 1.5rem;
+  --gm-control-xs-icon-size: 1rem;
+  --gm-control-xs-arrow-size: 1rem;
+  --gm-control-xs-padding-block: .125rem;
+  --gm-control-xs-padding-inline: .5rem;
+  --gm-icon-size: 1.25rem;
+  --gm-select-arrow-size: 1.25rem;
+  --gm-select-arrow-inset: .5rem;
+  --gm-select-text-gap: .5rem;
+  --gm-select-text-inset: calc(var(--gm-select-arrow-size) + var(--gm-select-arrow-inset) + var(--gm-select-text-gap));
+  --gm-cell-block: .25rem;
+  --gm-shadow-dialog: 0 12px 36px rgb(0 0 0 / .2);
+}
+.gm[data-density="compact"] { --gm-control-height: 1.75rem; --gm-cell-block: .125rem; }
+@media (pointer: coarse) {.gm[data-density="compact"] {--gm-control-height:2.75rem;--gm-cell-block:.75rem;}}
+@media (any-pointer: coarse) {.gm {--gm-control-xs-height:2.75rem;--gm-control-xs-text-size:1rem;--gm-control-xs-line-height:1.5rem;--gm-control-xs-icon-size:1.25rem;--gm-control-xs-arrow-size:1.25rem;}}
+
+/* components.css */
+/* All icons are official inline SVG elements supplied by the HTML or icon renderer. */
+.gm {font-family:var(--gm-font);font-size:var(--gm-text-size);line-height:1.65;color:var(--gm-text);background:var(--gm-surface);}
+.gm *, .gm *::before, .gm *::after {box-sizing:border-box;}
+.gm [hidden] {display:none!important;}
+/* Touch the edge by default; existing frames and filled controls are handled by the shared preset. */
+.gm :focus-visible {outline-width:2px;outline-style:solid;outline-color:var(--gm-focus);outline-offset:0;}
+.gm a {color:var(--gm-brand);text-underline-offset:.2em;}
+.gm button,.gm input,.gm select,.gm textarea {font:inherit;color:inherit;}
+.gm button {cursor:pointer;}
+.gm button:disabled {cursor:not-allowed;opacity:.55;}
+.gm h1,.gm h2,.gm h3,.gm p {margin:0;}
+.gm h1 {font-size:var(--gm-title-size);line-height:var(--gm-title-line-height);}
+.gm h2 {font-size:var(--gm-section-title-size);line-height:var(--gm-section-title-line-height);}
+.gm h3 {font-size:var(--gm-subtitle-size);line-height:var(--gm-subtitle-line-height);}
+.gm .gm-muted {color:var(--gm-muted);}
+.gm .gm-meta {font-size:var(--gm-meta-size);color:var(--gm-muted);}
+.gm .gm-sr {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.gm .gm-stack {display:grid;gap:var(--gm-space-5);}
+.gm .gm-row {display:flex;gap:var(--gm-space-2);align-items:center;flex-wrap:wrap;}
+.gm .gm-between {justify-content:space-between;}
+.gm .gm-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gm-space-5);}
+.gm .gm-section {padding-block:var(--gm-space-2);}
+.gm .gm-section h2,.gm .gm-section h3 {margin-bottom:var(--gm-space-2);}
+.gm .gm-panel {background:var(--gm-surface);border:1px solid var(--gm-border);padding:var(--gm-space-5);border-radius:var(--gm-radius);}
+.gm .gm-page-head {display:flex;justify-content:space-between;align-items:flex-start;gap:var(--gm-space-2);flex-wrap:wrap;margin-bottom:var(--gm-space-2);}
+.gm .gm-page-head p {margin-top:var(--gm-space-1);color:var(--gm-muted);font-size:var(--gm-label-size);}
+.gm .gm-breadcrumb {margin-bottom:var(--gm-space-2);font-size:var(--gm-meta-size);}
+.gm .gm-breadcrumb ol {display:flex;flex-wrap:wrap;gap:var(--gm-space-2);padding:0;margin:0;list-style:none;}
+.gm .gm-breadcrumb li+li::before {content:"/";margin-right:var(--gm-space-2);color:var(--gm-muted);}
+.gm .gm-btn {display:inline-flex;align-items:center;justify-content:center;gap:var(--gm-space-2);min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);background:var(--gm-surface);font-size:var(--gm-label-size);font-weight:600;line-height:1.5;text-align:center;text-decoration:none;}
+.gm .gm-btn:hover:not(:disabled) {background:var(--gm-background);}
+.gm .gm-btn-primary {color:var(--gm-on-brand);background:var(--gm-brand);border-color:var(--gm-brand);}
+.gm .gm-btn-primary:hover:not(:disabled) {background:var(--gm-brand-hover);}
+.gm .gm-btn-danger {color:var(--gm-on-error);background:var(--gm-error);border-color:var(--gm-error);}
+.gm .gm-btn-danger:hover:not(:disabled) {background:var(--gm-error);text-decoration:underline;}
+.gm .gm-link {background:transparent;border:0;padding:.25rem 0;color:var(--gm-brand);font-size:inherit;text-decoration:underline;text-underline-offset:.2em;text-align:left;}
+.gm .gm-field {display:grid;align-content:start;gap:var(--gm-space-1);min-width:0;}
+.gm .gm-money {text-align:right;font-variant-numeric:tabular-nums;}
+.gm .gm-label {font-size:var(--gm-label-size);font-weight:600;}
+.gm .gm-required {color:var(--gm-error);font-size:var(--gm-meta-size);font-weight:500;margin-left:var(--gm-space-2);}
+.gm .gm-input,.gm .gm-select,.gm .gm-textarea {width:100%;min-width:0;min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);background:var(--gm-surface);border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);line-height:1.5;}
+.gm .gm-select-wrap {--gm-select-text-inset:calc(var(--gm-select-arrow-size) + var(--gm-select-arrow-inset) + var(--gm-select-text-gap));position:relative;display:grid;grid-template-columns:minmax(0,1fr);align-self:start;min-width:0;max-width:100%;color:var(--gm-text);}
+.gm .gm-select-wrap > .gm-select,.gm .gm-select-wrap > .gm-input {grid-area:1 / 1;margin:0;}
+.gm .gm-select-wrap > .gm-select-arrow {grid-area:1 / 1;align-self:center;justify-self:end;display:block;margin-inline-end:var(--gm-select-arrow-inset);width:var(--gm-select-arrow-size);height:var(--gm-select-arrow-size);fill:currentColor;pointer-events:none;}
+.gm .gm-select-wrap > .gm-select {display:block;appearance:none;-webkit-appearance:none;background-image:none;padding-inline-end:var(--gm-select-text-inset);cursor:pointer;}
+.gm .gm-select-wrap > .gm-select:hover:not(:disabled) {border-color:var(--gm-text);}
+.gm .gm-select-wrap:has(> .gm-select:disabled) {color:var(--gm-muted);}
+.gm .gm-select-wrap > .gm-select:disabled {color:var(--gm-muted);background-color:var(--gm-background);cursor:not-allowed;}
+@media(forced-colors:active) {.gm .gm-select-wrap > .gm-select-arrow{color:ButtonText;}.gm .gm-select-wrap:has(> .gm-select:disabled) > .gm-select-arrow{color:GrayText;}}
+.gm .gm-input::placeholder,.gm .gm-textarea::placeholder {color:var(--gm-muted);opacity:1;}
+.gm .gm-textarea {resize:vertical;}
+.gm .gm-input[readonly],.gm .gm-textarea[readonly] {background:var(--gm-background);}
+.gm [aria-invalid="true"] {border-color:var(--gm-error);}
+.gm .gm-help {font-size:var(--gm-meta-size);color:var(--gm-muted);}
+.gm .gm-error-text {font-size:var(--gm-label-size);color:var(--gm-error);}
+.gm .gm-choice {display:flex;align-items:flex-start;gap:var(--gm-space-2);font-size:var(--gm-label-size);min-height:var(--gm-control-height);padding-block:var(--gm-control-padding-block);cursor:pointer;}
+.gm .gm-choice input,.gm .gm-table input[type="checkbox"] {accent-color:var(--gm-brand);width:var(--gm-choice-size);height:var(--gm-choice-size);flex:none;margin:.18rem 0 0;}
+.gm fieldset {border:0;padding:0;margin:0;min-width:0;}
+.gm legend {font-size:var(--gm-label-size);font-weight:600;margin-bottom:var(--gm-space-2);}
+.gm .gm-alert {padding:var(--gm-space-2);background:var(--gm-surface);border:1px solid var(--gm-border);font-size:var(--gm-label-size);}
+.gm .gm-alert strong {display:block;margin-bottom:var(--gm-space-1);}
+.gm .gm-alert-error > strong {color:var(--gm-error);}
+.gm .gm-alert-success > strong {color:var(--gm-success);}
+.gm .gm-alert-warning > strong {color:var(--gm-warning);}
+.gm .gm-badge {display:inline;white-space:nowrap;font-size:var(--gm-label-size);font-weight:500;color:var(--gm-muted);}
+.gm .gm-badge-wait {color:var(--gm-warning);}
+.gm .gm-badge-success {color:var(--gm-success);}
+.gm .gm-badge-error {color:var(--gm-error);}
+.gm .gm-search-panel {background:var(--gm-surface);padding:var(--gm-space-5);border:1px solid var(--gm-border);border-radius:var(--gm-radius);margin-bottom:var(--gm-space-5);}
+.gm .gm-search-fields {display:grid;grid-template-columns:minmax(12rem,2fr) minmax(9rem,1fr) auto;align-items:end;gap:var(--gm-space-2);}
+.gm .gm-disclosure {margin-top:var(--gm-space-2);}
+.gm .gm-disclosure summary {color:var(--gm-brand);font-size:var(--gm-label-size);cursor:pointer;min-height:var(--gm-control-height);padding-block:var(--gm-control-padding-block);width:fit-content;}
+.gm .gm-filter-chips {display:flex;gap:var(--gm-space-2);align-items:center;flex-wrap:wrap;font-size:var(--gm-meta-size);color:var(--gm-muted);margin-bottom:var(--gm-space-2);}
+.gm .gm-chip {color:var(--gm-text);}
+.gm .gm-chip + .gm-chip::before {content:"／";margin-inline-end:var(--gm-space-2);color:var(--gm-muted);}
+.gm .gm-table-toolbar {display:flex;justify-content:space-between;align-items:center;gap:var(--gm-space-2);flex-wrap:wrap;margin-block:var(--gm-space-2);font-size:var(--gm-label-size);}
+.gm .gm-table-toolbar label {display:flex;gap:var(--gm-space-2);align-items:center;}
+.gm .gm-table-toolbar select {width:auto;}
+.gm .gm-table-scroll {max-width:100%;overflow-x:auto;background:var(--gm-surface);}
+.gm .gm-table {border-collapse:collapse;width:100%;font-size:var(--gm-label-size);}
+.gm .gm-table th,.gm .gm-table td {padding:var(--gm-cell-block) var(--gm-space-2);vertical-align:middle;text-align:left;}
+.gm .gm-table th {font-weight:600;background:var(--gm-background);color:var(--gm-muted);}
+.gm .gm-table th button {background:transparent;border:0;padding:0;color:var(--gm-text);font-weight:600;text-align:inherit;min-height:1.75rem;}
+.gm .gm-table tbody tr:hover {background:var(--gm-brand-soft);}
+.gm .gm-table tbody tr[aria-selected="true"] {background:var(--gm-brand-soft);}
+.gm .gm-table tbody tr.gm-selected-row {background:var(--gm-brand-soft);}
+.gm .gm-table .gm-number,.gm .gm-number {text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.gm .gm-table .gm-check-cell {width:3rem;text-align:center;}
+.gm .gm-table .gm-check-cell input {display:block;margin:0;vertical-align:middle;}
+.gm .gm-check-cell label {display:grid;place-items:center;line-height:1;min-height:var(--gm-choice-target);min-width:var(--gm-choice-target);}
+.gm .gm-bulk {display:flex;gap:var(--gm-space-4);align-items:center;flex-wrap:wrap;padding:var(--gm-space-3) var(--gm-space-4);margin-block:var(--gm-space-4);border:1px solid var(--gm-border);background:var(--gm-background);font-size:var(--gm-label-size);}
+.gm .gm-pagination {display:flex;justify-content:space-between;align-items:center;gap:var(--gm-space-2);flex-wrap:wrap;margin-top:var(--gm-space-2);font-size:var(--gm-label-size);}
+.gm .gm-empty {padding:var(--gm-space-7) var(--gm-space-5);text-align:center;background:var(--gm-surface);}
+.gm .gm-empty p {margin-block:var(--gm-space-2) var(--gm-space-2);color:var(--gm-muted);font-size:var(--gm-label-size);}
+.gm .gm-detail {display:grid;grid-template-columns:10rem minmax(0,1fr);margin:0;}
+.gm .gm-detail dt,.gm .gm-detail dd {margin:0;padding:var(--gm-space-2);overflow-wrap:anywhere;}
+.gm .gm-detail dt {font-size:var(--gm-label-size);background:var(--gm-background);color:var(--gm-muted);}
+.gm .gm-form {max-width:48rem;}
+.gm .gm-form-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gm-space-5);}
+.gm .gm-span-2 {grid-column:span 2;}
+.gm .gm-form-actions {display:flex;align-items:center;justify-content:space-between;gap:var(--gm-space-4);flex-wrap:wrap;padding-top:var(--gm-space-5);margin-top:var(--gm-space-6);}
+.gm .gm-tabs {display:flex;gap:var(--gm-space-2);margin-bottom:var(--gm-space-2);flex-wrap:wrap;}
+.gm .gm-tabs button {min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);background:transparent;border:0;font-size:var(--gm-label-size);color:var(--gm-muted);}
+.gm .gm-tabs button[aria-pressed="true"] {color:var(--gm-brand);background:var(--gm-brand-soft);font-weight:600;}
+.gm .gm-steps {display:flex;align-items:center;gap:var(--gm-space-2);list-style:none;padding:0;margin:0 0 var(--gm-space-2);flex-wrap:wrap;font-size:var(--gm-label-size);color:var(--gm-muted);}
+.gm .gm-steps li[aria-current="step"] {color:var(--gm-brand);font-weight:700;}
+.gm .gm-steps li+li > .gm-step-icon {display:inline-block;vertical-align:middle;width:1rem;height:1rem;margin-inline-end:var(--gm-space-2);color:var(--gm-muted);fill:currentColor;}
+.gm .gm-split-view {display:grid;grid-template-columns:17rem minmax(0,1fr);border:1px solid var(--gm-border);background:var(--gm-surface);}
+.gm .gm-queue-head {padding:var(--gm-space-2);font-size:var(--gm-label-size);color:var(--gm-muted);}
+.gm .gm-queue-item {display:grid;gap:var(--gm-space-2);width:100%;text-align:left;padding:var(--gm-space-2);border:0;background:var(--gm-surface);font-size:var(--gm-label-size);}
+.gm .gm-queue-item[aria-pressed="true"] {background:var(--gm-background);}
+.gm .gm-current-marker {visibility:hidden;color:var(--gm-text);font-weight:700;}
+.gm .gm-queue-item[aria-pressed="true"] .gm-current-marker {visibility:visible;}
+.gm .gm-review {min-width:0;padding:var(--gm-space-5);}
+.gm .gm-timeline {list-style:none;margin:0;padding:0;}
+.gm .gm-timeline li {padding:var(--gm-space-2) 0;font-size:var(--gm-label-size);}
+.gm .gm-dialog {color:var(--gm-text);background:var(--gm-surface);width:min(32rem,calc(100% - 2rem));max-height:calc(100% - 2rem);padding:var(--gm-space-5);border:1px solid var(--gm-border);border-radius:var(--gm-radius);box-shadow:var(--gm-shadow-dialog);overflow-y:auto;}
+.gm .gm-dialog::backdrop {background:var(--gm-backdrop);}
+.gm .gm-dialog h2 {margin-bottom:var(--gm-space-2);}
+.gm .gm-dialog .gm-row {justify-content:flex-end;margin-top:var(--gm-space-2);}
+.gm .gm-loading {padding:var(--gm-space-6);text-align:center;color:var(--gm-muted);}
+.gm .gm-skeleton {height:.875rem;background:var(--gm-border);border-radius:2px;margin-top:var(--gm-space-2);}
+.gm .gm-skip {position:absolute;left:1rem;top:-10rem;z-index:20;background:var(--gm-surface);padding:.75rem;}
+.gm .gm-skip:focus {top:1rem;}
+.gm .gm-btn.gm-icon-btn {width:var(--gm-control-height);min-width:var(--gm-control-height);min-height:var(--gm-control-height);padding:0;}
+.gm .gm-icon {display:inline-block;width:var(--gm-icon-size);height:var(--gm-icon-size);vertical-align:middle;fill:currentColor;flex:none;}
+.gm .gm-icon[data-size="16"] {width:1rem;height:1rem;}
+.gm .gm-icon[data-size="24"] {width:1.5rem;height:1.5rem;}
+.gm .gm-icon[data-size="32"] {width:2rem;height:2rem;}
+.gm .gm-table th button .gm-icon {margin-inline-start:.25rem;}
+.gm .gm-table .gm-link {padding-block:0;min-height:var(--gm-choice-target);}
+.gm .gm-mode-toggle {position:relative;display:inline-flex;vertical-align:middle;}
+/* Keep the SVG out of inline text layout: its baseline otherwise shifts it inside this fixed slot. */
+.gm .gm-mode-icon {display:flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;line-height:0;flex:none;}
+.gm .gm-mode-icon > .gm-icon {display:block;width:100%;height:100%;}
+/* Auxiliary controls use a separate size from business form density. */
+.gm .gm-btn[data-size="xs"],.gm .gm-input[data-size="xs"],.gm .gm-select-wrap[data-size="xs"] > .gm-select {min-height:var(--gm-control-xs-height);padding:var(--gm-control-xs-padding-block) var(--gm-control-xs-padding-inline);font-size:var(--gm-control-xs-text-size);line-height:var(--gm-control-xs-line-height);}
+.gm .gm-select-wrap[data-size="xs"] {--gm-select-arrow-size:var(--gm-control-xs-arrow-size);--gm-select-arrow-inset:.5rem;--gm-select-text-inset:calc(var(--gm-select-arrow-size) + var(--gm-select-arrow-inset) + var(--gm-select-text-gap));}
+.gm .gm-select-wrap[data-size="xs"] > .gm-select {padding-inline-end:var(--gm-select-text-inset);}
+.gm .gm-btn.gm-icon-btn[data-size="xs"] {width:var(--gm-control-xs-height);min-width:var(--gm-control-xs-height);padding:0;}
+.gm .gm-btn[data-size="xs"] .gm-mode-icon {width:var(--gm-control-xs-icon-size);height:var(--gm-control-xs-icon-size);}
+.gm .gm-mode-tooltip {position:absolute;top:calc(100% + .5rem);inset-inline-end:0;z-index:30;max-width:min(20rem,calc(100vw - 2rem));width:max-content;padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);background:var(--gm-text);color:var(--gm-surface);font-size:var(--gm-label-size);font-weight:400;pointer-events:auto;}
+.gm .gm-mode-tooltip::before {content:"";position:absolute;inset-inline:0;bottom:100%;height:.5rem;}
+@media(forced-colors:active) {.gm .gm-mode-icon{color:ButtonText;}.gm .gm-mode-tooltip{color:CanvasText;background:Canvas;border-color:CanvasText;}}
+@media(forced-colors:active) {.gm .gm-select-arrow,.gm .gm-chevron {color:ButtonText;}.gm .gm-select-wrap:has(> .gm-select:disabled) > .gm-select-arrow {color:GrayText;}}
+@media(max-width:800px) {.gm .gm-search-fields{grid-template-columns:1fr 1fr;}.gm .gm-search-fields>.gm-row{grid-column:1/-1;}.gm .gm-split-view{grid-template-columns:1fr;}}
+@media(max-width:560px) {.gm .gm-grid,.gm .gm-form-grid,.gm .gm-search-fields{grid-template-columns:1fr;}.gm .gm-span-2{grid-column:auto;}.gm .gm-detail{grid-template-columns:1fr;}.gm .gm-detail dt{padding-bottom:.5rem;}.gm .gm-detail dd{padding-top:.5rem;}.gm .gm-panel,.gm .gm-search-panel,.gm .gm-review{padding:var(--gm-space-2);}.gm .gm-table{min-width:37rem;}}
+@media(pointer:coarse) {.gm .gm-link,.gm .gm-table th button{min-height:2.75rem;}.gm .gm-check-cell label{min-height:2.75rem;}.gm .gm-input,.gm .gm-select,.gm .gm-textarea{font-size:1rem;}}
+@media(prefers-reduced-motion:reduce) {.gm * {scroll-behavior:auto!important;}}
+@media print {.gm .gm-btn,.gm .gm-search-panel,.gm .gm-pagination,.gm .gm-bulk,.gm .gm-skip{display:none!important;}.gm .gm-table-scroll{overflow:visible;}.gm .gm-table{min-width:0;}.gm .gm-panel{border:0;padding:0;}.gm .gm-detail dt{print-color-adjust:exact;}}
+.gm .gm-btn > .gm-icon {width:1rem;height:1rem;}
+/* Lists share a compact toolbar, bounded viewport and persistent pager. */
+.gm .gm-data-grid {min-width:0;border:1px solid var(--gm-border);border-radius:var(--gm-radius);background:var(--gm-surface);}
+.gm .gm-data-grid .gm-table-toolbar {position:relative;margin:0;padding:8px;}
+.gm .gm-grid-tools,.gm .gm-page-size,.gm .gm-page-navigation,.gm .gm-page-numbers {display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-width:0;}
+.gm .gm-grid-tools,.gm .gm-page-size {gap:8px;}
+.gm .gm-grid-tools .gm-utility-label,.gm .gm-page-size .gm-utility-label {display:flex;align-items:center;gap:4px;}
+.gm .gm-data-grid .gm-bulk {margin:0;padding:4px 8px;gap:8px;border:0;}
+.gm .gm-data-grid .gm-grid-selection {margin:0;padding:4px 8px;}
+.gm .gm-selection-count {flex:none;inline-size:calc(4em + var(--gm-selection-digits,3)*1ch);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.gm .gm-selection-number {display:inline-block;inline-size:3ch;text-align:right;font-variant-numeric:tabular-nums;}
+.gm .gm-data-grid .gm-table-scroll {overflow:auto;scrollbar-gutter:stable;scroll-padding-block:44px 8px;overscroll-behavior-inline:contain;}
+.gm .gm-data-grid .gm-table-scroll {max-height:min(var(--gm-grid-max-height,28rem),60dvh);}
+.gm .gm-data-grid .gm-table {table-layout:fixed;border-collapse:separate;border-spacing:0;}
+.gm .gm-data-grid .gm-table th {position:sticky;top:0;z-index:1;}
+.gm .gm-data-grid .gm-table th {color:var(--gm-text);}
+.gm .gm-data-grid .gm-table tbody tr:nth-child(even) {background:var(--gm-background);}
+.gm .gm-data-grid .gm-table tbody tr:hover,.gm .gm-data-grid .gm-table tbody tr.gm-selected-row,.gm .gm-data-grid .gm-table tbody tr[aria-selected="true"] {background:var(--gm-brand-soft);}
+.gm .gm-column-heading {display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0;}
+.gm .gm-column-heading > span:first-child,.gm .gm-column-heading > button {min-width:0;overflow-wrap:anywhere;}
+.gm .gm-column-heading > button {display:flex;align-items:center;gap:4px;flex:1;}
+.gm .gm-column-heading > button .gm-icon {flex:none;margin:0;}
+.gm .gm-number .gm-column-heading > button {justify-content:flex-end;}
+.gm .gm-column-resize {display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;min-height:24px;cursor:col-resize;touch-action:none;border-radius:var(--gm-radius);color:var(--gm-muted);}
+.gm .gm-column-resize .gm-icon {transform:rotate(90deg);}
+.gm .gm-column-resize:hover,.gm .gm-column-resize:focus-visible {background:var(--gm-brand-soft);color:var(--gm-text);}
+.gm .gm-data-grid .gm-pagination {margin:0;padding:8px;background:var(--gm-background);border-radius:var(--gm-radius);}
+.gm .gm-page-size {font-variant-numeric:tabular-nums;}
+.gm .gm-page-size .gm-select-wrap[data-size="xs"] {width:3.5rem;--gm-select-arrow-inset:.25rem;--gm-select-text-gap:.25rem;}
+.gm .gm-page-size .gm-select-wrap[data-size="xs"] > .gm-select {padding-inline-start:.25rem;}
+@media(pointer:coarse) {.gm .gm-page-size .gm-select-wrap[data-size="xs"]{width:4rem;}}
+.gm .gm-page-number {min-width:24px;}
+.gm .gm-page-number[aria-current="page"] {background:var(--gm-brand-soft);color:var(--gm-text);border-color:var(--gm-brand);font-weight:700;}
+.gm .gm-page-position {white-space:nowrap;font-variant-numeric:tabular-nums;}
+.gm .gm-column-settings {position:relative;}
+.gm .gm-column-settings > summary {display:inline-flex;list-style:none;cursor:pointer;}
+.gm .gm-column-settings > summary::-webkit-details-marker {display:none;}
+.gm .gm-column-panel {position:absolute;inset-inline-start:0;top:calc(100% + 4px);z-index:5;width:min(22rem,100%);max-height:min(26rem,60dvh);overflow:auto;overscroll-behavior:contain;padding:8px;border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);background:var(--gm-surface);}
+.gm .gm-data-grid .gm-column-settings {position:static;}
+.gm .gm-data-grid .gm-column-panel {inset-inline-start:auto;inset-inline-end:8px;width:min(22rem,calc(100% - 16px));}
+.gm .gm-column-panel fieldset {min-width:0;border:0;padding:0;margin:0;}
+.gm .gm-column-setting {flex-wrap:nowrap;padding-block:4px;}
+.gm .gm-column-setting > .gm-choice {min-width:0;overflow-wrap:anywhere;}
+.gm .gm-column-setting > .gm-row {flex:none;gap:4px;}
+.gm .gm-column-panel .gm-help:empty {display:none;}
+@media(max-width:560px) {
+  .gm .gm-data-grid .gm-table-toolbar {align-items:flex-start;}
+  .gm .gm-data-grid .gm-grid-tools {width:100%;}
+  .gm .gm-page-numbers {display:none;}
+}
+@media(pointer:coarse) {.gm .gm-column-resize{width:44px;min-height:44px;}.gm .gm-column-settings > summary{min-width:44px;min-height:44px;}}
+@media print {.gm .gm-grid-tools,.gm .gm-column-resize{display:none!important;}.gm .gm-data-grid .gm-table-scroll{max-height:none!important;overflow:visible;}.gm .gm-data-grid .gm-table{min-width:0!important;}.gm .gm-data-grid .gm-table th{position:static!important;}}
+
+/* BEGIN GENERATED BUSINESS PRESET */
+/* 業務UIの標準プリセット。remはルート16pxの場合の値。ページ全体のルート文字サイズは変更しない。 */
+.gm {
+  --gm-text-size: .875rem;
+  --gm-label-size: .8125rem;
+  --gm-meta-size: .75rem;
+  --gm-title-size: 1rem;
+  --gm-title-line-height: 1.5rem;
+  --gm-section-title-size: .875rem;
+  --gm-section-title-line-height: 1.25rem;
+  --gm-subtitle-size: .8125rem;
+  --gm-subtitle-line-height: 1.25rem;
+  --gm-control-height: 1.75rem;
+  --gm-control-padding-block: .125rem;
+  --gm-control-xs-text-size: .8125rem;
+  --gm-control-xs-height: 1.5rem;
+  --gm-cell-block: .25rem;
+  --gm-scroll-offset: 1rem;
+}
+.gm[data-density="compact"] {--gm-control-height:1.75rem;--gm-control-padding-block:.125rem;--gm-cell-block:.125rem;}
+.gm[data-density="comfortable"] {--gm-control-height:2.5rem;--gm-control-padding-block:.5rem;--gm-cell-block:.75rem;}
+.gm h1 {font-size:var(--gm-title-size);line-height:var(--gm-title-line-height);}
+.gm h2 {font-size:var(--gm-section-title-size);line-height:var(--gm-section-title-line-height);}
+.gm h3 {font-size:var(--gm-subtitle-size);line-height:var(--gm-subtitle-line-height);}
+.gm .gm-btn {padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);}
+.gm .gm-input,.gm .gm-select,.gm .gm-textarea {font-size:var(--gm-text-size);padding-block:var(--gm-control-padding-block);}
+.gm .gm-choice {padding-block:var(--gm-control-padding-block);}
+.gm .gm-btn[data-size="xs"],.gm .gm-input[data-size="xs"],.gm .gm-select-wrap[data-size="xs"] > .gm-select {padding-block:var(--gm-control-xs-padding-block);}
+.gm .gm-btn[data-size="sm"] {min-height:1.75rem;padding:.125rem .5rem;}
+.gm .gm-btn[data-size="lg"] {min-height:2.5rem;padding:.5rem .5rem;}
+.gm .gm-btn.gm-icon-btn {width:var(--gm-control-height);min-width:var(--gm-control-height);min-height:var(--gm-control-height);padding:0;}
+.gm .gm-btn.gm-icon-btn[data-size="xs"] {width:var(--gm-control-xs-height);min-width:var(--gm-control-xs-height);min-height:var(--gm-control-xs-height);padding:0;padding-block:0;}
+.gm .gm-switch,.gm .gm-segments label,.gm .gm-tab,.gm .gm-menu button,.gm .gm-shell-nav a,.gm .gm-file-input {font-size:var(--gm-label-size);}
+.gm .gm-switch,.gm .gm-segments label,.gm .gm-tab,.gm .gm-menu button,.gm .gm-shell-nav a {min-height:var(--gm-control-height);padding-block:var(--gm-control-padding-block);}
+.gm .gm-option {min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);}
+.gm .gm-file-input::file-selector-button {min-height:var(--gm-control-height);padding-block:var(--gm-control-padding-block);}
+
+/* Text may grow and wrap; minimum target size does not require oversized visual icons. */
+.gm {overflow-wrap:anywhere;}
+.gm :where(.gm-btn,.gm-link,.gm-tab,.gm-tabs button,.gm-table th button,.gm-popover>summary) {min-width:24px;min-height:24px;}
+.gm .gm-btn,.gm .gm-tab {min-height:var(--gm-control-height);}
+.gm .gm-btn[data-size="sm"] {min-height:1.75rem;}
+.gm .gm-btn[data-size="lg"] {min-height:2.5rem;}
+.gm .gm-btn[data-size="xs"] {min-height:var(--gm-control-xs-height);}
+.gm .gm-link {display:inline-flex;align-items:center;}
+.gm .gm-hit-target {display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px;}
+.gm .gm-choice,.gm .gm-switch,.gm .gm-segments label {min-width:24px;max-width:100%;}
+.gm .gm-utility-label,.gm .gm-badge {white-space:normal;}
+.gm .gm-utility-bar {display:flex;align-items:center;flex-wrap:wrap;gap:var(--gm-space-2);margin-block:var(--gm-space-2);}
+.gm .gm-utility-label {display:inline-flex;align-items:center;gap:.5rem;font-size:var(--gm-control-xs-text-size);line-height:1.5;}
+.gm .gm-utility-label,.gm .gm-table-toolbar label,.gm .gm-input-line {flex-wrap:wrap;max-width:100%;}
+.gm .gm-row > *,.gm .gm-page-head > *,.gm .gm-table-toolbar > *,.gm .gm-pagination > * {max-width:100%;}
+.gm .gm-page-head > div {min-width:0;}
+.gm .gm-file-list>li,.gm .gm-toast {flex-wrap:wrap;}
+.gm .gm-table th,.gm .gm-table td {overflow-wrap:anywhere;}
+.gm .gm-mode-tooltip,.gm .gm-tooltip-content {white-space:normal;overflow-wrap:anywhere;}
+.gm .gm-input-line>.gm-input {flex-basis:12rem;}
+.gm :focus-visible,.gm [id] {scroll-margin-block:var(--gm-scroll-offset);}
+/* A single 2px stroke replaces an existing frame without changing border width or layout. */
+.gm :is(.gm-input,.gm-select,.gm-textarea,.gm-btn,.gm-table-scroll,.gm-tab-panel):focus-visible,
+.gm .gm-switch input:focus-visible {outline-offset:-2px;}
+/* Filled surfaces need an internal contrasting stroke, not the brand color on itself.
+   The 1px outer rim is the unchanged fill, not an extra outline. */
+.gm .gm-btn.gm-btn-primary:focus-visible {outline-color:var(--gm-on-brand);outline-offset:-3px;}
+.gm .gm-btn.gm-btn-danger:focus-visible {outline-color:var(--gm-on-error);outline-offset:-3px;}
+.gm .gm-switch input:checked:focus-visible {outline-color:var(--gm-on-brand);outline-offset:-3px;}
+/* The quiet variant has a transparent surface even when a semantic button class is present. */
+.gm .gm-btn[data-variant="quiet"]:focus-visible {outline-color:var(--gm-focus);outline-offset:-2px;}
+.gm .gm-table-scroll,.gm .gm-popup,.gm .gm-multi-list,.gm .gm-dialog {scroll-padding:1rem;}
+.gm .gm-option[data-active="true"] {outline:2px solid var(--gm-focus);outline-offset:-2px;}
+.gm .gm-error-summary {border:1px solid var(--gm-error);padding:var(--gm-space-2);margin-block:var(--gm-space-2);}
+.gm .gm-error-summary h2 {color:var(--gm-error);}
+.gm .gm-error-summary ul {margin-block:.5rem 0;padding-inline-start:1.5rem;}
+@media (max-width:560px) {
+  .gm .gm-grid-cols-2,.gm .gm-grid-cols-3 {grid-template-columns:minmax(0,1fr);}
+  .gm .gm-col-span-2 {grid-column:auto;}
+}
+@media (any-pointer: coarse) {
+  .gm,.gm[data-density] {--gm-control-height:2.75rem;--gm-control-padding-block:.5rem;--gm-control-xs-height:2.75rem;--gm-control-xs-text-size:1rem;--gm-control-xs-line-height:1.5rem;--gm-control-xs-icon-size:1.25rem;--gm-control-xs-arrow-size:1.25rem;--gm-choice-target:2.75rem;--gm-cell-block:.75rem;}
+  .gm .gm-input,.gm .gm-select,.gm .gm-textarea {font-size:1rem;min-height:2.75rem;}
+  .gm .gm-btn[data-size="sm"],.gm .gm-btn[data-size="lg"] {min-height:2.75rem;}
+  .gm .gm-btn,.gm .gm-choice,.gm .gm-switch,.gm .gm-segments label,.gm .gm-option,.gm .gm-menu button,.gm .gm-shell-nav a {min-height:44px;}
+  .gm .gm-btn.gm-icon-btn,.gm .gm-btn.gm-icon-btn[data-size="xs"] {width:44px;min-width:44px;min-height:44px;}
+  .gm .gm-link,.gm .gm-tab,.gm .gm-tabs button,.gm .gm-table th button,.gm .gm-check-cell label,.gm .gm-hit-target,.gm .gm-popover>summary {min-width:44px;min-height:44px;}
+}
+@media (forced-colors:active) {
+  .gm :focus-visible,.gm .gm-option[data-active="true"] {outline-color:Highlight!important;}
+  .gm .gm-btn:focus-visible {outline-offset:-2px!important;}
+  .gm .gm-switch input:focus-visible {outline-offset:0!important;}
+  .gm .gm-btn,.gm .gm-input,.gm .gm-select,.gm .gm-textarea {border-color:ButtonText;}
+  .gm .gm-btn:disabled,.gm .gm-input:disabled,.gm .gm-select:disabled,.gm .gm-textarea:disabled {color:GrayText;border-color:GrayText;opacity:1;}
+  .gm .gm-input[aria-invalid="true"],.gm .gm-select[aria-invalid="true"],.gm .gm-textarea[aria-invalid="true"] {border-style:dashed;}
+  .gm .gm-tabs button[aria-pressed="true"],.gm .gm-tab[aria-selected="true"] {color:Highlight;}
+  .gm .gm-option[aria-selected="true"],.gm .gm-shell-nav a[aria-current="page"] {text-decoration:underline;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .gm,.gm *,.gm *::before,.gm *::after {scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important;}
+}
+/* END GENERATED BUSINESS PRESET */
+
+/* extended.css */
+.gm .gm-btn[data-size="sm"] {min-height:1.75rem;padding:.125rem .5rem;}
+.gm .gm-copy-control {display:inline-block;max-width:100%;vertical-align:middle;}
+.gm .gm-copy-button {max-width:100%;}
+.gm .gm-copy-button[aria-busy="true"] {cursor:progress;}
+.gm .gm-copy-label {display:block;min-width:0;text-align:start;overflow-wrap:anywhere;}
+.gm .gm-copy-button [data-copy-success],.gm .gm-copy-button[data-copied="true"] [data-copy-label] {display:none;}
+.gm .gm-copy-button[data-copied="true"] [data-copy-success] {display:inline;}
+.gm .gm-copy-error {display:block;margin-block-start:var(--gm-space-2);}
+.gm .gm-btn[data-size="lg"] {min-height:2.5rem;padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);}
+.gm .gm-btn[data-variant="quiet"] {border-color:transparent;background:transparent;color:var(--gm-text);}
+.gm .gm-btn[data-variant="quiet"]:hover:not(:disabled) {background:var(--gm-background);color:var(--gm-text);}
+.gm .gm-input-line {display:flex;align-items:stretch;gap:var(--gm-space-2);min-width:0;}
+.gm .gm-input-line>.gm-input {flex:1;min-width:0;}
+.gm .gm-select-wrap>.gm-input {padding-inline-end:var(--gm-select-text-inset);}
+.gm .gm-chevron {width:var(--gm-select-arrow-size);height:var(--gm-select-arrow-size);fill:currentColor;margin-inline:0;flex:none;pointer-events:none;}
+.gm .gm-switch {display:flex;align-items:center;gap:var(--gm-space-2);min-height:var(--gm-control-height);width:fit-content;cursor:pointer;}
+.gm .gm-switch input {appearance:none;width:2rem;height:1.125rem;border:1px solid var(--gm-input-border);border-radius:1rem;background:var(--gm-background);margin:0;flex:none;position:relative;}
+.gm .gm-switch input::after {content:"";position:absolute;width:.75rem;height:.75rem;top:2px;left:2px;border-radius:50%;background:var(--gm-muted);}
+.gm .gm-switch input:checked {background:var(--gm-brand);border-color:var(--gm-brand);}
+.gm .gm-switch input:checked::after {left:calc(100% - .75rem - 2px);background:var(--gm-on-brand);}
+.gm .gm-switch input:disabled {opacity:.55;cursor:not-allowed;}
+.gm .gm-segments {display:flex;gap:var(--gm-space-2);flex-wrap:wrap;}
+.gm .gm-segments label {position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);font-size:var(--gm-label-size);cursor:pointer;}
+.gm .gm-segments label:has(:checked) {background:var(--gm-background);font-weight:700;}
+.gm .gm-segments input {accent-color:var(--gm-brand);}
+.gm .gm-popup-host {position:relative;min-width:0;}
+.gm .gm-popup {position:absolute;z-index:5;inset-inline:0;top:100%;margin-top:.25rem;background:var(--gm-surface);border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);padding:.5rem;max-height:18rem;overflow:auto;}
+.gm .gm-options {list-style:none;padding:0;margin:0;}
+.gm .gm-option {padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);min-height:var(--gm-control-height);cursor:pointer;font-size:var(--gm-label-size);overflow-wrap:anywhere;}
+.gm .gm-option[aria-selected="true"] {background:var(--gm-background);font-weight:700;text-decoration:underline;text-underline-offset:.2em;}
+.gm .gm-option[aria-disabled="true"] {color:var(--gm-muted);cursor:not-allowed;}
+.gm .gm-option:hover:not([aria-disabled="true"]) {background:var(--gm-background);}
+.gm .gm-multi-list {max-height:15rem;overflow-y:auto;}
+.gm .gm-multi-toggle {display:flex;justify-content:space-between;width:100%;}
+.gm .gm-file-list {padding:0;margin:0;list-style:none;}
+.gm .gm-file-list>li {display:flex;align-items:center;justify-content:space-between;gap:var(--gm-space-2);padding:var(--gm-space-2) 0;overflow-wrap:anywhere;}
+.gm .gm-file-list .gm-file-name {min-width:0;overflow-wrap:anywhere;}
+.gm .gm-file-input {width:100%;min-width:0;max-width:100%;font-size:var(--gm-label-size);}
+.gm .gm-file-input::file-selector-button {font:inherit;min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);border:1px solid var(--gm-input-border);border-radius:var(--gm-radius);background:var(--gm-surface);color:var(--gm-text);cursor:pointer;margin-inline-end:var(--gm-space-2);}
+.gm .gm-tab-list {display:flex;gap:var(--gm-space-2);flex-wrap:wrap;}
+.gm .gm-tab {min-height:var(--gm-control-height);border:0;background:transparent;color:var(--gm-muted);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);font-size:var(--gm-label-size);}
+.gm .gm-tab[aria-selected="true"] {color:var(--gm-brand);background:var(--gm-brand-soft);font-weight:700;}
+.gm .gm-tab-panel {padding-block:var(--gm-space-2);}
+.gm .gm-menu {min-width:12rem;inset-inline-end:auto;}
+.gm .gm-menu button {display:block;width:100%;text-align:left;border:0;background:var(--gm-surface);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);min-height:var(--gm-control-height);}
+.gm .gm-menu button:hover,.gm .gm-menu button:focus {background:var(--gm-background);}
+.gm .gm-popover {position:relative;}
+.gm .gm-popover>summary {width:fit-content;}
+.gm .gm-popover>div {margin-top:var(--gm-space-3);padding:var(--gm-space-4);border:1px solid var(--gm-border);background:var(--gm-surface);}
+.gm .gm-tooltip {position:relative;display:inline-block;}
+.gm .gm-tooltip-content {position:absolute;bottom:100%;inset-inline-start:0;z-index:6;width:max-content;max-width:min(20rem,80vw);background:var(--gm-text);color:var(--gm-surface);font-size:var(--gm-label-size);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);border-radius:var(--gm-radius);}
+.gm .gm-progress {width:100%;height:1rem;accent-color:var(--gm-brand);}
+.gm .gm-toast {display:flex;align-items:center;justify-content:space-between;gap:var(--gm-space-4);border:1px solid var(--gm-input-border);background:var(--gm-surface);padding:var(--gm-space-4);margin-block:var(--gm-space-3);}
+.gm .gm-drawer {margin:0 0 0 auto;height:100%;max-height:100%;width:min(32rem,100%);border-radius:0;}
+.gm .gm-tree,.gm .gm-tree ul {list-style:none;padding:0;margin:0;}
+.gm .gm-tree ul {padding-inline-start:var(--gm-space-5);}
+.gm .gm-tree summary,.gm .gm-tree a,.gm .gm-tree span {min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) 0;display:block;}
+.gm .gm-tree summary {display:list-item;cursor:pointer;}
+.gm .gm-tree li {margin-inline-start:1rem;}
+.gm .gm-shell {display:grid;grid-template-columns:13rem minmax(0,1fr);border:1px solid var(--gm-border);}
+.gm .gm-shell-header {grid-column:1/-1;padding:var(--gm-space-4);}
+.gm .gm-shell-nav {padding:var(--gm-space-4);}
+.gm .gm-shell-nav a {display:block;padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);min-height:var(--gm-control-height);color:var(--gm-text);}
+.gm .gm-shell-nav a[aria-current="page"] {background:var(--gm-background);font-weight:700;}
+.gm .gm-shell-content {padding:var(--gm-space-5);min-width:0;}
+.gm .gm-theme-layout {display:grid;grid-template-columns:17rem minmax(0,1fr);gap:var(--gm-space-6);align-items:start;}
+.gm .gm-theme-preview {padding:var(--gm-space-5);border:1px solid var(--gm-border);min-width:0;}
+.gm .gm-theme-layout pre {white-space:pre-wrap;word-break:break-word;}
+@media(max-width:800px) {.gm .gm-theme-layout{grid-template-columns:1fr;}.gm .gm-shell{grid-template-columns:1fr;}}
+@media(any-pointer:coarse) {.gm .gm-btn[data-size="sm"],.gm .gm-btn[data-size="lg"],.gm .gm-input,.gm .gm-select {min-height:2.75rem;}.gm .gm-table td,.gm .gm-table th{padding-block:max(.75rem,var(--gm-cell-block));}}
+@media(forced-colors:active) {.gm .gm-switch input{appearance:auto;width:1.5rem;height:1.5rem;}.gm .gm-switch input::after{display:none;}.gm .gm-tooltip-content{border:1px solid CanvasText;}.gm .gm-tab[aria-selected="true"]{color:Highlight;}}
+
+@media(any-pointer:coarse) {.gm .gm-tab,.gm .gm-switch,.gm .gm-segments label,.gm .gm-option,.gm .gm-menu button,.gm .gm-shell-nav a,.gm .gm-tree summary,.gm .gm-tree a {min-height:44px;min-width:44px;}.gm .gm-file-input::file-selector-button {min-height:44px;}}
+
+/* utilities.css */
+/* Optional, scoped utility classes. Include after component styles. */
+.gm .gm-p-1 { padding:var(--gm-space-1); }
+.gm .gm-px-1 { padding-inline:var(--gm-space-1); }
+.gm .gm-py-1 { padding-block:var(--gm-space-1); }
+.gm .gm-gap-1 { gap:var(--gm-space-1); }
+.gm .gm-mt-1 { margin-top:var(--gm-space-1); }
+.gm .gm-mb-1 { margin-bottom:var(--gm-space-1); }
+.gm .gm-p-2 { padding:var(--gm-space-2); }
+.gm .gm-px-2 { padding-inline:var(--gm-space-2); }
+.gm .gm-py-2 { padding-block:var(--gm-space-2); }
+.gm .gm-gap-2 { gap:var(--gm-space-2); }
+.gm .gm-mt-2 { margin-top:var(--gm-space-2); }
+.gm .gm-mb-2 { margin-bottom:var(--gm-space-2); }
+.gm .gm-p-3 { padding:var(--gm-space-3); }
+.gm .gm-px-3 { padding-inline:var(--gm-space-3); }
+.gm .gm-py-3 { padding-block:var(--gm-space-3); }
+.gm .gm-gap-3 { gap:var(--gm-space-3); }
+.gm .gm-mt-3 { margin-top:var(--gm-space-3); }
+.gm .gm-mb-3 { margin-bottom:var(--gm-space-3); }
+.gm .gm-p-4 { padding:var(--gm-space-4); }
+.gm .gm-px-4 { padding-inline:var(--gm-space-4); }
+.gm .gm-py-4 { padding-block:var(--gm-space-4); }
+.gm .gm-gap-4 { gap:var(--gm-space-4); }
+.gm .gm-mt-4 { margin-top:var(--gm-space-4); }
+.gm .gm-mb-4 { margin-bottom:var(--gm-space-4); }
+.gm .gm-p-5 { padding:var(--gm-space-5); }
+.gm .gm-px-5 { padding-inline:var(--gm-space-5); }
+.gm .gm-py-5 { padding-block:var(--gm-space-5); }
+.gm .gm-gap-5 { gap:var(--gm-space-5); }
+.gm .gm-mt-5 { margin-top:var(--gm-space-5); }
+.gm .gm-mb-5 { margin-bottom:var(--gm-space-5); }
+.gm .gm-p-6 { padding:var(--gm-space-6); }
+.gm .gm-px-6 { padding-inline:var(--gm-space-6); }
+.gm .gm-py-6 { padding-block:var(--gm-space-6); }
+.gm .gm-gap-6 { gap:var(--gm-space-6); }
+.gm .gm-mt-6 { margin-top:var(--gm-space-6); }
+.gm .gm-mb-6 { margin-bottom:var(--gm-space-6); }
+.gm .gm-p-7 { padding:var(--gm-space-7); }
+.gm .gm-px-7 { padding-inline:var(--gm-space-7); }
+.gm .gm-py-7 { padding-block:var(--gm-space-7); }
+.gm .gm-gap-7 { gap:var(--gm-space-7); }
+.gm .gm-mt-7 { margin-top:var(--gm-space-7); }
+.gm .gm-mb-7 { margin-bottom:var(--gm-space-7); }
+.gm .gm-flex { display:flex; }
+.gm .gm-grid { display:grid; }
+.gm .gm-block { display:block; }
+.gm .gm-wrap { flex-wrap:wrap; }
+.gm .gm-items-center { align-items:center; }
+.gm .gm-items-start { align-items:flex-start; }
+.gm .gm-justify-between { justify-content:space-between; }
+.gm .gm-justify-end { justify-content:flex-end; }
+.gm .gm-w-full { width:100%; }
+.gm .gm-w-auto { width:auto; }
+.gm .gm-min-w-0 { min-width:0; }
+.gm .gm-max-w-content { max-width:var(--gm-content-width,80rem); }
+.gm .gm-max-w-form { max-width:48rem; }
+.gm .gm-mx-auto { margin-inline:auto; }
+.gm .gm-text-left { text-align:left; }
+.gm .gm-text-right { text-align:right; }
+.gm .gm-font-bold { font-weight:700; }
+.gm .gm-grid-cols-1 { grid-template-columns:minmax(0,1fr); }
+.gm .gm-grid-cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.gm .gm-grid-cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.gm .gm-col-span-2 { grid-column:span 2; }
+@media(min-width:560px) {
+  .gm .sm\:gm-grid-cols-1 {grid-template-columns:repeat(1,minmax(0,1fr));}
+  .gm .sm\:gm-grid-cols-2 {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .gm .sm\:gm-grid-cols-3 {grid-template-columns:repeat(3,minmax(0,1fr));}
+  .gm .sm\:gm-grid-cols-4 {grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+@media(min-width:800px) {
+  .gm .md\:gm-grid-cols-1 {grid-template-columns:repeat(1,minmax(0,1fr));}
+  .gm .md\:gm-grid-cols-2 {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .gm .md\:gm-grid-cols-3 {grid-template-columns:repeat(3,minmax(0,1fr));}
+  .gm .md\:gm-grid-cols-4 {grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+@media(min-width:1120px) {
+  .gm .lg\:gm-grid-cols-1 {grid-template-columns:repeat(1,minmax(0,1fr));}
+  .gm .lg\:gm-grid-cols-2 {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .gm .lg\:gm-grid-cols-3 {grid-template-columns:repeat(3,minmax(0,1fr));}
+  .gm .lg\:gm-grid-cols-4 {grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+
+/* Fixed column utilities collapse at narrow widths; responsive variants remain explicit. */
+@media(max-width:560px) {.gm .gm-grid-cols-2,.gm .gm-grid-cols-3{grid-template-columns:minmax(0,1fr);}.gm .gm-col-span-2{grid-column:auto;}}
+
+
+/*!
+Third-party icon attribution
+Material Symbols Outlined / Google
+Source: https://github.com/google/material-design-icons
+Commit: 40a7a292a79d9394157e1ea24f83d52d5e17c556
+Modified: CSS examples add class, sizing, currentColor and accessibility attributes to inline SVG; original path coordinates and viewBox preserved.
+No NOTICE file at the pinned repository root.
+The following license applies to the third-party icon data only; it does not relicense the UI stylesheet.
+
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+  </style>
+  <style id="bindsql-layout">
+/* BindSQL layout adapter. GYOMU-UI 0.6.1 compact handoff CSS is embedded unchanged above. */
+html.gm {
+  height: 100%;
+  --editor-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --editor-size: var(--gm-text-size);
+  --editor-leading: 1.65;
+  --editor-padding: var(--gm-space-4);
+}
+
+body {
+  margin: 0;
+  height: 100dvh;
+  min-height: 32rem;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--gm-background);
+}
+
+.gm .app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gm-space-2);
+  padding: var(--gm-space-2) var(--gm-space-5);
+  background: var(--gm-surface);
+}
+
+.gm .app-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--gm-space-1) var(--gm-space-2);
+  min-width: 0;
+  font-size: var(--gm-title-size);
+  line-height: var(--gm-title-line-height);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.gm .app-title__database {
+  color: var(--gm-muted);
+  font-size: var(--gm-meta-size);
+  font-weight: 400;
+}
+
+.gm .app {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--gm-space-5);
+  padding: var(--gm-space-5);
+  min-height: 0;
+  min-width: 0;
+}
+
+.gm .panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 0;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.gm .panel--output { grid-template-rows: auto minmax(0, 1fr) auto; }
+
+.gm .panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gm-space-2);
+  padding: var(--gm-space-2) var(--gm-space-4);
+}
+
+.gm .panel__title-wrap { display: grid; gap: var(--gm-space-1); min-width: 0; }
+.gm .panel__eyebrow { font-size: var(--gm-meta-size); color: var(--gm-muted); }
+.gm .panel__title { font-size: var(--gm-section-title-size); line-height: var(--gm-section-title-line-height); font-weight: 600; }
+.gm .panel__actions { display: flex; align-items: center; margin-inline-start: auto; max-width: 100%; }
+.gm .panel__body { display: grid; grid-template-rows: minmax(0, 1fr); min-height: 0; min-width: 0; padding: var(--gm-space-3); }
+.gm .field { display: grid; grid-template-rows: minmax(0, 1fr); min-height: 0; min-width: 0; }
+.gm .input-editor { position: relative; min-height: 0; min-width: 0; background: var(--gm-surface); border-radius: var(--gm-radius); }
+
+/* Both layers share all text metrics so caret, selection and highlight align. */
+.gm .input-editor__highlight,
+.gm .textarea,
+.gm .output {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: var(--editor-padding);
+  font-family: var(--editor-font);
+  font-size: var(--editor-size);
+  line-height: var(--editor-leading);
+  font-weight: 400;
+  font-variant-ligatures: none;
+  tab-size: 2;
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+  overflow: auto;
+  resize: none;
+  field-sizing: fixed;
+}
+
+.gm .input-editor__highlight {
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: var(--gm-radius);
+  background: transparent;
+  color: var(--gm-text);
+  pointer-events: none;
+  scrollbar-width: none;
+}
+.gm .input-editor__highlight::-webkit-scrollbar { width: 0; height: 0; }
+.gm .textarea {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--gm-text);
+  -webkit-text-fill-color: transparent;
+}
+.gm .textarea::selection, .gm .output::selection { background: color-mix(in srgb, var(--gm-brand) 24%, transparent); }
+.gm .sql-token { font-weight: inherit; }
+.gm .sql-token--keyword { color: var(--gm-brand); }
+.gm .sql-token--string { color: var(--gm-warning); }
+.gm .sql-token--number { color: var(--gm-success); }
+.gm .sql-token--comment { color: var(--gm-muted); font-style: normal; }
+
+/* Keep all existing action controls at 30px (with a 16px root font). */
+.gm .gm-btn {
+  --gm-control-height: 1.875rem;
+  --gm-control-xs-height: 1.875rem;
+  --gm-control-padding-block: .125rem;
+}
+.gm .gm-btn.button { min-height: var(--gm-control-height); }
+.gm .gm-btn.gm-icon-btn[data-size="xs"] {
+  width: var(--gm-control-xs-height);
+  min-width: var(--gm-control-xs-height);
+  min-height: var(--gm-control-xs-height);
+}
+.gm .button { max-width: 100%; }
+.gm .gm-copy-button[data-copied="true"] { color: var(--gm-success); background: var(--gm-success-bg); border-color: var(--gm-success); }
+.gm .gm-copy-button[data-copied="true"]:focus-visible { outline-color: var(--gm-success); }
+.gm .button__icon, .gm .button__icon * { pointer-events: none; }
+
+/* Reuse the existing checkbox; no controls or visible labels are added. */
+.gm .mode-toggle { flex: none; }
+.gm .switch { position: relative; cursor: pointer; }
+.gm .switch input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.gm .switch:has(input:focus-visible) { outline: 2px solid var(--gm-focus); outline-offset: -2px; }
+.gm .switch .gm-mode-icon { pointer-events: none; }
+
+.gm .validation {
+  max-height: min(12rem, 24dvh);
+  overflow: auto;
+  border-top: 1px solid var(--gm-border);
+  padding: var(--gm-space-3) var(--gm-space-4);
+  font-size: var(--gm-meta-size);
+  background: var(--gm-background);
+  overflow-wrap: anywhere;
+}
+.gm .validation__status { font-weight: 600; }
+.gm .validation[data-status="error"] { background: var(--gm-error-bg); }
+.gm .validation[data-status="error"] .validation__status { color: var(--gm-error); }
+.gm .validation[data-status="checked"] .validation__status { color: var(--gm-success); }
+.gm .validation__issues { margin: var(--gm-space-2) 0 0; padding-inline-start: var(--gm-space-5); }
+.gm .validation__issues li + li { margin-top: var(--gm-space-2); }
+.gm .validation__location {
+  display: inline;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--gm-brand);
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+.gm .flash {
+  position: fixed;
+  inset-block-end: var(--gm-space-4);
+  inset-inline-start: 50%;
+  z-index: 20;
+  width: min(calc(100% - 2rem), 35rem);
+  border: 1px solid var(--gm-input-border);
+  border-radius: var(--gm-radius);
+  padding: var(--gm-space-3) var(--gm-space-4);
+  background: var(--gm-surface);
+  color: var(--gm-text);
+  font-size: var(--gm-label-size);
+  text-align: center;
+  opacity: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.gm .flash[data-type="error"] { border-color: var(--gm-error); background: var(--gm-error-bg); color: var(--gm-error); }
+.gm .flash.is-visible { opacity: 1; }
+
+@media (max-width: 760px) {
+  body { height: auto; min-height: 100dvh; }
+  .gm .app-bar { padding: var(--gm-space-2) var(--gm-space-4); }
+  .gm .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(2, minmax(24rem, 48dvh)); padding: var(--gm-space-4); gap: var(--gm-space-4); }
+}
+@media (any-pointer: coarse) {
+  html.gm { --editor-size: 1rem; }
+}
+@media (forced-colors: active) {
+  .gm .textarea { color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  .gm .input-editor__highlight { visibility: hidden; }
+  .gm .switch:has(input:focus-visible) { outline-color: Highlight; }
+}
+@media print {
+  .gm .app-bar, .gm .flash, .gm .panel:not(.panel--output) { display: none !important; }
+  body { height: auto; min-height: 0; background: var(--gm-surface); }
+  .gm .app { display: block; padding: 0; }
+  .gm .panel--output { display: block; overflow: visible; }
+  .gm .output { min-height: 80vh; white-space: pre-wrap; }
+  .gm .validation { max-height: none; overflow: visible; }
+}
+
   </style>
 </head>
 <body>
+  <!-- Material Symbols Outlined SVGs from the supplied GYOMU-UI 0.6.1.
+       Original paths and viewBox preserved; classes and sizes adapted.
+       Attribution and full Apache-2.0 license are in gyomu-ui-styles. -->
   <header class="app-bar">
-    <p class="app-title"><span>BindSQL for Eclipse</span><span class="app-title__database">PostgreSQL専用</span></p>
+    <h1 class="app-title"><span>BindSQL for Eclipse</span><span class="app-title__database">PostgreSQL専用</span></h1>
     <div class="mode-toggle">
-      <label class="switch" for="lightModeToggle">
+      <label class="switch gm-btn gm-icon-btn" data-size="xs" for="lightModeToggle">
         <input checked id="lightModeToggle" type="checkbox" data-role="mode-toggle" aria-label="ライト/ダークモード切り替え" />
-        <span class="slider">
-          <div class="star star_1"></div>
-          <div class="star star_2"></div>
-          <div class="star star_3"></div>
-          <svg viewBox="0 0 16 16" class="cloud_1 cloud" aria-hidden="true">
-            <path
-              transform="matrix(.77976 0 0 .78395-299.99-418.63)"
-              fill="#fff"
-              d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
-            ></path>
-          </svg>
-        </span>
+        <span class="gm-mode-icon" data-mode-icon="light"><svg xmlns="http://www.w3.org/2000/svg" class="gm-icon" data-icon="dark_mode" viewBox="0 -960 960 960" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M479.96-144Q340-144 242-242t-98-238q0-140 97.93-238t237.83-98q13.06 0 25.65 1 12.59 1 25.59 3-39 29-62 72t-23 92q0 85 58.5 143.5T648-446q49 0 92-23t72-62q2 13 3 25.59t1 25.65q0 139.9-98.04 237.83t-238 97.93Zm.04-72q82 0 148.78-47.07Q695.55-310.15 727-386q-20 5-39.67 8.5Q667.67-374 648-374q-113.86 0-193.93-80.07Q374-534.14 374-648q0-19.67 3.5-39.33Q381-707 386-727q-75.85 31.45-122.93 98.22Q216-562 216-480q0 110 77 187t187 77Zm-14-250Z"/></svg></span>
+        <span class="gm-mode-icon" data-mode-icon="dark" hidden><svg xmlns="http://www.w3.org/2000/svg" class="gm-icon" data-icon="light_mode" viewBox="0 -960 960 960" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm-.23 72Q400-288 344-344.23q-56-56.22-56-136Q288-560 344.23-616q56.22-56 136-56Q560-672 616-615.77q56 56.22 56 136Q672-400 615.77-344q-56.22 56-136 56ZM216-444H48v-72h168v72Zm696 0H744v-72h168v72ZM444-744v-168h72v168h-72Zm0 696v-168h72v168h-72ZM269-642 166-742l51-55 102 104-50 51Zm474 475L642-268l49-51 103 101-51 51ZM640-691l102-101 51 49-100 103-53-51ZM163-217l105-99 49 47-98 104-56-52Zm317-263Z"/></svg></span>
       </label>
     </div>
   </header>
   <main class="app">
-    <section class="panel panel--input" aria-label="入力エリア">
+    <section class="gm-panel panel panel--input" aria-label="入力エリア">
       <header class="panel__header">
         <div class="panel__title-wrap">
           <p class="panel__eyebrow">Input</p>
-          <h1 class="panel__title">SQL + バインド変数</h1>
+          <h2 class="panel__title">SQL + バインド変数</h2>
         </div>
-        <button class="button button--ghost" type="button" data-action="clear">
-          <span class="button__icon" aria-hidden="true">backspace</span>
+        <button class="gm-btn button button--ghost" data-size="xs" type="button" data-action="clear">
+          <svg xmlns="http://www.w3.org/2000/svg" class="gm-icon button__icon" data-size="16" data-icon="backspace" viewBox="0 -960 960 960" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M371-240q-16.73 0-31.36-7Q325-254 314-267L144-480l170-213q11-13 25.64-20 14.63-7 31.36-7h325q29.7 0 50.85 21.15Q768-677.7 768-648v336q0 29.7-21.15 50.85Q725.7-240 696-240H371Zm325-72v-336 336Zm-325 0h325v-336H371L236-480l135 168Zm61-24 96-96 96 96 48-48-96-96 96-96-48-48-96 96-96-96-48 48 96 96-96 96 48 48Z"/></svg>
           <span>クリア</span>
         </button>
       </header>
 
       <div class="panel__body">
         <div class="field">
-          <label class="sr-only" for="raw-input">貼り付け欄</label>
+          <label class="gm-sr" for="raw-input">貼り付け欄</label>
           <div class="input-editor">
             <pre class="input-editor__highlight" data-role="raw-highlight" aria-hidden="true"></pre>
             <textarea
               id="raw-input"
-              class="textarea"
+              class="gm-textarea textarea"
               data-role="raw-input"
               wrap="off"
               spellcheck="false"
@@ -713,26 +1078,30 @@
 
     </section>
 
-    <section class="panel panel--output" aria-label="出力エリア">
+    <section class="gm-panel panel panel--output" aria-label="出力エリア">
       <header class="panel__header">
         <div class="panel__title-wrap">
           <p class="panel__eyebrow">Output</p>
           <h2 class="panel__title"><span data-role="database-label">PostgreSQL</span>向け SQL</h2>
         </div>
-        <div class="panel__actions">
-          <button class="button button--primary" type="button" data-action="copy">
-            <span class="button__icon" aria-hidden="true">content_copy</span>
-            <span data-role="copy-label" aria-live="polite">コピー</span>
+        <div class="panel__actions gm-copy-control">
+          <button class="gm-btn gm-btn-primary gm-copy-button button button--primary" data-copied="false" type="button" data-action="copy">
+            <svg xmlns="http://www.w3.org/2000/svg" class="gm-icon button__icon" data-size="16" data-icon="content_copy" viewBox="0 -960 960 960" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M360-240q-29.7 0-50.85-21.15Q288-282.3 288-312v-480q0-29.7 21.15-50.85Q330.3-864 360-864h384q29.7 0 50.85 21.15Q816-821.7 816-792v480q0 29.7-21.15 50.85Q773.7-240 744-240H360Zm0-72h384v-480H360v480ZM216-96q-29.7 0-50.85-21.15Q144-138.3 144-168v-552h72v552h456v72H216Zm144-216v-480 480Z"/></svg>
+            <span class="gm-copy-label">
+              <span data-role="copy-label" data-copy-label>コピー</span>
+              <span data-copy-success aria-hidden="true">コピーしました</span>
+            </span>
           </button>
+          <span class="gm-sr" role="status" aria-live="polite" aria-atomic="true" data-copy-status></span>
         </div>
       </header>
 
       <div class="panel__body">
         <div class="field">
-          <label class="sr-only" for="sql-output">出力欄</label>
+          <label class="gm-sr" for="sql-output">出力欄</label>
           <textarea
             id="sql-output"
-            class="output"
+            class="gm-textarea output"
             data-role="output"
             aria-describedby="validation-status"
             readonly
@@ -781,20 +1150,30 @@ if (typeof exports === 'object' && typeof module === 'object') {
   // Parser errors use one-based Unicode character positions. AST locations use
   // zero-based UTF-8 byte offsets. Convert both to textarea's UTF-16 offsets.
   function characterOffset(sql, position) {
-    return position > 0 ? [...sql].slice(0, position - 1).join('').length : null;
-  }
-
-  function byteOffset(sql, location) {
-    if (!Number.isInteger(location) || location < 0) return null;
-    let bytes = 0;
+    if (!(position > 0)) return null;
     let offset = 0;
+    let count = 1;
     for (const character of sql) {
-      if (bytes >= location) break;
-      const code = character.codePointAt(0);
-      bytes += code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0x10000 ? 3 : 4;
+      if (count++ >= position) break;
       offset += character.length;
     }
     return offset;
+  }
+
+  function resolveByteOffsets(sql, issues) {
+    const locations = [...new Set(issues.map(issue => issue.offset).filter(Number.isInteger))].sort((a, b) => a - b);
+    const offsets = new Map();
+    let bytes = 0;
+    let offset = 0;
+    for (const location of locations) {
+      while (offset < sql.length && bytes < location) {
+        const code = sql.codePointAt(offset);
+        bytes += code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0x10000 ? 3 : 4;
+        offset += code > 0xffff ? 2 : 1;
+      }
+      offsets.set(location, offset);
+    }
+    return issues.map(issue => ({ ...issue, offset: offsets.get(issue.offset) ?? null }));
   }
 
   function firstLocation(node) {
@@ -806,7 +1185,7 @@ if (typeof exports === 'object' && typeof module === 'object') {
       if (Number.isInteger(value.location) && value.location >= 0) {
         first = first === null ? value.location : Math.min(first, value.location);
       }
-      pending.push(...Object.values(value).filter(child => child && typeof child === 'object'));
+      for (const child of Object.values(value)) if (child && typeof child === 'object') pending.push(child);
     }
     return first;
   }
@@ -826,36 +1205,48 @@ if (typeof exports === 'object' && typeof module === 'object') {
     const issues = [];
     const counts = new WeakMap();
     const add = (code, message, node) => issues.push({
-      code, message, offset: byteOffset(sql, firstLocation(node))
+      code, message, offset: firstLocation(node)
     });
 
-    function countSelect(select) {
-      if (!select) return null;
-      if (counts.has(select)) return counts.get(select);
-      let count = null;
-      if (select.valuesLists) {
-        const rows = select.valuesLists.map(row => row.List?.items ?? []);
-        const rowCounts = rows.map(expressionCount);
-        const reference = rowCounts.find(value => value !== null);
-        rows.forEach((row, index) => {
-          if (rowCounts[index] !== null && reference !== undefined && rowCounts[index] !== reference) {
-            add('values-count', `VALUESの${index + 1}行目は値が${rowCounts[index]}個です。他の行（${reference}個）と一致しません。`, row);
-          }
-        });
-        if (rowCounts.length && rowCounts.every(value => value !== null && value === reference)) count = reference;
-      } else if (select.op && select.op !== 'SETOP_NONE') {
-        const left = countSelect(select.larg);
-        const right = countSelect(select.rarg);
-        if (left !== null && right !== null && left !== right) {
-          const operation = select.op.replace('SETOP_', '');
-          add('set-count', `${operation}の左右の列数が一致しません（左${left}列・右${right}列）。`, select.rarg);
-        } else if (left !== null && left === right) count = left;
-      } else {
-        // PostgreSQL also permits a SELECT with an empty target list.
-        count = expressionCount((select.targetList ?? []).map(target => target.ResTarget?.val));
+    function countSelect(root) {
+      if (!root) return null;
+      const pending = [root];
+      while (pending.length) {
+        const select = pending[pending.length - 1];
+        if (counts.has(select)) { pending.pop(); continue; }
+        const setOperation = select.op && select.op !== 'SETOP_NONE';
+        const children = setOperation ? [select.larg, select.rarg].filter(Boolean) : [];
+        const unresolved = children.filter(child => !counts.has(child));
+        if (unresolved.length) {
+          for (const child of unresolved) pending.push(child);
+          continue;
+        }
+        let count = null;
+        if (select.valuesLists) {
+          const rows = select.valuesLists.map(row => row.List?.items ?? []);
+          const rowCounts = rows.map(expressionCount);
+          const reference = rowCounts.find(value => value !== null);
+          rows.forEach((row, index) => {
+            if (rowCounts[index] !== null && reference !== undefined && rowCounts[index] !== reference) {
+              add('values-count', `VALUESの${index + 1}行目は値が${rowCounts[index]}個です。他の行（${reference}個）と一致しません。`, row);
+            }
+          });
+          if (rowCounts.length && rowCounts.every(value => value !== null && value === reference)) count = reference;
+        } else if (select.op && select.op !== 'SETOP_NONE') {
+          const left = counts.get(select.larg) ?? null;
+          const right = counts.get(select.rarg) ?? null;
+          if (left !== null && right !== null && left !== right) {
+            const operation = select.op.replace('SETOP_', '');
+            add('set-count', `${operation}の左右の列数が一致しません（左${left}列・右${right}列）。`, select.rarg);
+          } else if (left !== null && left === right) count = left;
+        } else {
+          // PostgreSQL also permits a SELECT with an empty target list.
+          count = expressionCount((select.targetList ?? []).map(target => target.ResTarget?.val));
+        }
+        counts.set(select, count);
+        pending.pop();
       }
-      counts.set(select, count);
-      return count;
+      return counts.get(root) ?? null;
     }
 
     function checkInsert(insert) {
@@ -895,6 +1286,13 @@ if (typeof exports === 'object' && typeof module === 'object') {
       const node = pending.pop();
       if (!node || typeof node !== 'object') continue;
       if (node.InsertStmt) checkInsert(node.InsertStmt);
+      if (node.MergeWhenClause?.commandType === 'CMD_INSERT') {
+        const clause = node.MergeWhenClause;
+        checkInsert({
+          cols: clause.targetList,
+          selectStmt: clause.values ? { SelectStmt: { valuesLists: [{ List: { items: clause.values } }] } } : null
+        });
+      }
       if (node.SelectStmt) countSelect(node.SelectStmt);
       // UPDATE's row assignment and INSERT ... ON CONFLICT share this node.
       const assignment = node.MultiAssignRef;
@@ -907,11 +1305,11 @@ if (typeof exports === 'object' && typeof module === 'object') {
           add('assignment-count', `SETの代入先は${assignment.ncolumns}列ですが、代入する値は${count}個です。`, source);
         }
       }
-      pending.push(...Object.values(node).filter(child => child && typeof child === 'object').reverse());
+      for (const child of Object.values(node).reverse()) if (child && typeof child === 'object') pending.push(child);
     }
     // MultiAssignRef repeats its source tree once per assigned column.
     const unique = new Map(issues.map(issue => [JSON.stringify(issue), issue]));
-    return [...unique.values()].sort((a, b) => (a.offset ?? Infinity) - (b.offset ?? Infinity));
+    return resolveByteOffsets(sql, [...unique.values()]).sort((a, b) => (a.offset ?? Infinity) - (b.offset ?? Infinity));
   }
 
   function parse(module, sql) {
@@ -941,13 +1339,15 @@ if (typeof exports === 'object' && typeof module === 'object') {
     }
   }
 
-  self.onmessage = async ({ data: { id, sql, wasmBinary } }) => {
+  self.onmessage = async event => {
+    const { id, sql, wasmBinary } = event?.data ?? {};
     try {
+      if (!Number.isSafeInteger(id) || typeof sql !== 'string') throw new TypeError('Invalid parser request');
       // The binary is transferred only once, including when the first input
       // contains NUL or has no SQL. Retain initialization for subsequent edits.
       modulePromise ??= PgQueryModule({ wasmBinary });
       const module = await modulePromise;
-      if (!sql.trim()) {
+      if (/^[ \t\r\n\f]*$/.test(sql)) {
         self.postMessage({ id, status: 'empty', issues: [] });
         return;
       }
@@ -1216,10 +1616,12 @@ above license.
       const list = document.querySelector('[data-role="validation-issues"]');
       const output = document.querySelector('[data-role="output"]');
       let worker = null;
+      let parserBinary = null;
       let revision = 0;
       let debounce = 0;
       let timeout = 0;
       let currentSql = '';
+      let inFlight = false;
 
       function clearTimers() {
         window.clearTimeout(debounce);
@@ -1247,7 +1649,8 @@ above license.
             location.setAttribute('aria-label', `出力SQLの${line}行${column}列へ移動`);
             location.addEventListener('click', () => {
               output.focus();
-              const characterLength = [...currentSql.slice(offset)][0]?.length ?? 0;
+              const code = currentSql.codePointAt(offset);
+              const characterLength = code === undefined ? 0 : code > 0xffff ? 2 : 1;
               output.setSelectionRange(offset, offset + characterLength);
               const style = getComputedStyle(output);
               output.scrollTop = Math.max(0, (line - 1) * parseFloat(style.lineHeight) - output.clientHeight / 2);
@@ -1270,12 +1673,28 @@ above license.
         clearTimers();
         worker?.terminate();
         worker = null;
+        inFlight = false;
         show('unavailable', message);
       }
 
       function receive(event) {
+        if (!inFlight) return;
         const result = event.data;
-        if (result.id !== revision) return;
+        if (!result || typeof result !== 'object' || !Number.isInteger(result.id)) {
+          fail(revision);
+          return;
+        }
+        if (result.id !== revision || !inFlight) return;
+        if (['checked', 'empty'].includes(result.status) && (!Array.isArray(result.issues) || result.issues.length)) {
+          fail(result.id);
+          return;
+        }
+        if (result.status === 'error' && (!Array.isArray(result.issues) || !result.issues.length ||
+            result.issues.some(issue => !issue || typeof issue.message !== 'string'))) {
+          fail(result.id);
+          return;
+        }
+        inFlight = false;
         window.clearTimeout(timeout);
         if (result.status === 'unavailable') {
           fail(result.id);
@@ -1291,6 +1710,7 @@ above license.
       }
 
       window.BindSQLValidation = Object.freeze({
+        get status() { return panel.dataset.status; },
         reset(message = '') {
           revision++;
           clearTimers();
@@ -1298,15 +1718,26 @@ above license.
           // Terminate any previous work so clearing also releases parser memory.
           worker?.terminate();
           worker = null;
+          inFlight = false;
           show('idle', message);
         },
         schedule(sql) {
-          if (!sql.trim()) {
+          // Whitespace edits often produce identical SQL. Keep valid diagnostics
+          // and pending work; a failed parser must still be retried.
+          if (sql === currentSql && ['checking', 'checked', 'error', 'empty'].includes(panel.dataset.status)) return;
+          if (/^[ \t\r\n\f]*$/.test(sql)) {
             this.reset();
             return;
           }
           const id = ++revision;
           clearTimers();
+          // Stop synchronous WASM work before dispatching the newest revision.
+          // Reuse only idle workers so an expensive stale query cannot block edits.
+          if (inFlight) {
+            worker?.terminate();
+            worker = null;
+            inFlight = false;
+          }
           currentSql = sql;
           show('checking', 'PostgreSQL 15：チェック中…');
           debounce = window.setTimeout(() => {
@@ -1321,15 +1752,26 @@ above license.
                   URL.revokeObjectURL(url);
                 }
                 const activeWorker = worker;
-                worker.onmessage = receive;
+                worker.onmessage = event => {
+                  if (worker === activeWorker) receive(event);
+                };
+                worker.onmessageerror = () => {
+                  if (worker === activeWorker) fail(revision);
+                };
                 worker.onerror = event => {
                   event.preventDefault();
                   if (worker === activeWorker) fail(revision);
                 };
-                const base64 = document.getElementById('postgresql-validator-wasm').textContent.trim();
-                wasmBinary = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+                if (!parserBinary) {
+                  const base64 = document.getElementById('postgresql-validator-wasm').textContent.trim();
+                  parserBinary = Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+                }
+                // Transfer a copy: the cached bytes must survive cancellation
+                // and resets without decoding the full embedded binary again.
+                wasmBinary = parserBinary.slice();
               }
               timeout = window.setTimeout(() => fail(id, 'PostgreSQL 15：チェックが時間内に完了しませんでした。入力し直すと再試行します。'), 10000);
+              inFlight = true;
               worker.postMessage({ id, sql, wasmBinary }, wasmBinary ? [wasmBinary.buffer] : []);
             } catch (_error) {
               fail(id);
@@ -1337,6 +1779,7 @@ above license.
           }, 300);
         }
       });
+      window.addEventListener('pagehide', () => window.BindSQLValidation.reset());
     })();
   </script>
   <script id="bindsql-app">
@@ -1709,22 +2152,12 @@ WITH
         `\\b(?:${SQL_KEYWORD_DICTIONARY.map((_keyword) => _buildKeywordPatternSource(_keyword)).join("|")})\\b`,
         "gi"
       );
-      const NAMED_BIND_PATTERN = /^:?(?<name>[A-Za-z_][A-Za-z0-9_$]*)\s*(?:=>|=|:)\s*(?<value>.+)$/;
-      const NAMED_PLACEHOLDER_PATTERN = /(^|[^:]):(?<name>[A-Za-z_][A-Za-z0-9_$]*)\b/g;
-      const POSITIONAL_BIND_PATTERN = /^(?:\[(?<indexA>\d+)\]|(?<indexB>\d+))\s*(?:=>|=|:)\s*(?<value>.+)$/;
-      const PARAMETER_ENTRY_PATTERN = /^(?<key>:?[A-Za-z_][A-Za-z0-9_$]*|\[\d+\]|\d+)\s*(?:=>|=|:)\s*(?<value>.+)$/;
-      const SQL_PARAMETER_BLOCK_PATTERN = /^\s*sql\s*=\s*\[(?<sql>[\s\S]*?)\]\s*(?:parameters?|params?)\s*=\s*\[(?<parameters>[\s\S]*?)\]\s*$/i;
+      const NAMED_BIND_PATTERN = /^:?(?<name>[A-Za-z_][A-Za-z0-9_$]*)\s*(?:=>|=|:)\s*(?<value>[\s\S]*)$/;
+      const POSITIONAL_BIND_PATTERN = /^(?:\[(?<indexA>\d+)\]|(?<indexB>\d+))\s*(?:=>|=|:)\s*(?<value>[\s\S]*)$/;
+      const PARAMETER_ENTRY_PATTERN = /^(?<key>:?[A-Za-z_][A-Za-z0-9_$]*|\[\d+\]|\d+)\s*(?:=>|=|:)\s*(?<value>[\s\S]*)$/;
       const BIND_HEADER_PATTERN = /^(?:bind(?:\s+variables?)?|params?|parameters?)\s*:?\s*$/i;
       const SQL_PREFIX_PATTERN = /^\s*sql\s*[:=]\s*(?<sql>.+)$/i;
       const SQL_NUMERIC_LITERAL_PATTERN = /^[+-]?(?:(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)$/;
-      const POSTGRESQL_BARE_DATE_SOURCE = String.raw`\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])`;
-      const POSTGRESQL_BARE_TIME_SOURCE = String.raw`(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,9})?)?`;
-      const POSTGRESQL_BARE_TIME_ZONE_SOURCE = String.raw`(?:\s*(?:Z|[+-](?:[01]\d|2[0-3]):?[0-5]\d))?`;
-      const POSTGRESQL_BARE_DATE_TIME_LITERAL_PATTERN = new RegExp(
-        `(^|[^A-Za-z0-9_$'"@])(${POSTGRESQL_BARE_DATE_SOURCE}(?:[ T]${POSTGRESQL_BARE_TIME_SOURCE}${POSTGRESQL_BARE_TIME_ZONE_SOURCE})?|${POSTGRESQL_BARE_TIME_SOURCE}${POSTGRESQL_BARE_TIME_ZONE_SOURCE})(?![A-Za-z0-9_$])`,
-        "g"
-      );
-      const POSTGRESQL_FORMAT_COMPOSITE_OPERATOR_PATTERN = /#>>|->>|#>|->|@\?|@@|@>|<@|\?\||\?&|&&/g;
       const HIBERNATE_BIND_PATTERNS = [
         /\bbinding parameter\s+\[(?<index>\d+)\]\s+as\s+\[(?<type>[^\]]+)\]\s*-\s*\[(?<value>[\s\S]*?)\]\s*$/i,
         /\bbinding parameter\s+\((?<index>\d+)\s*:\s*(?<type>[^)]+)\)\s*<-\s*\[(?<value>[\s\S]*?)\]\s*$/i
@@ -1773,8 +2206,19 @@ WITH
         "WITH",
         "SQL"
       ]);
+      // Input detection must cover PostgreSQL commands independently of the
+      // smaller formatting/highlighting dictionary (e.g. CALL and EXPLAIN).
+      const SQL_STATEMENT_STARTS = new Set((
+        "ABORT ALTER ANALYSE ANALYZE BEGIN CALL CHECKPOINT CLOSE CLUSTER COMMENT COMMIT COPY CREATE " +
+        "DEALLOCATE DECLARE DELETE DISCARD DO DROP END EXECUTE EXPLAIN FETCH GRANT IMPORT INSERT " +
+        "LISTEN LOAD LOCK MERGE MOVE NOTIFY PREPARE REASSIGN REFRESH REINDEX RELEASE RESET REVOKE " +
+        "ROLLBACK SAVEPOINT SECURITY SELECT SET SHOW START TABLE TRUNCATE UNLISTEN UPDATE VACUUM VALUES WITH"
+      ).split(" "));
+      const HIBERNATE_SQL_PATTERN = new RegExp(
+        `\\borg\\.hibernate\\.SQL\\b.*?(?:-|:)[ \\t]*(?<sql>(?:(?:${[...SQL_STATEMENT_STARTS].join("|")})\\b|\\(|/\\*|--).*)$`, "i"
+      );
       const FLASH_DURATION_MS = 1500;
-      const COPY_SUCCESS_DURATION_MS = 1500;
+      const COPY_SUCCESS_DURATION_MS = 2000;
       const THEME_STORAGE_KEY = "bindsql-theme-preference";
       const THEME_LIGHT = "light";
       const THEME_DARK = "dark";
@@ -1797,6 +2241,8 @@ WITH
       const $output = qs('[data-role="output"]');
       const $flash = qs('[data-role="flash"]');
       const $copyLabel = qs('[data-role="copy-label"]');
+      const $copySuccess = qs('[data-copy-success]');
+      const $copyStatus = qs('[data-copy-status]');
       const $copyButton = qs('[data-action="copy"]');
       const $lightModeToggle = qs('[data-role="mode-toggle"]');
       const $databaseDialect = qs('[data-role="database-dialect"]');
@@ -1804,8 +2250,12 @@ WITH
 
       const _state = {
         _lastSql: "",
+        _lastRenderedText: null,
+        _isComposing: false,
         _flashTimer: 0,
         _copyLabelTimer: 0,
+        _copyRequestId: 0,
+        _copyBusy: false,
         _lastFlashKey: "",
         _lastFlashAt: 0,
         _hasManualTheme: false
@@ -1813,7 +2263,10 @@ WITH
 
       const _escapeRegExp = (_value) => _value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const _escapeHtml = (_value) => _value.replace(/[&<>"']/g, (_character) => HTML_ESCAPE_MAP[_character] ?? _character);
-      const _isWordCharacter = (_character) => /[A-Za-z0-9_$]/.test(_character);
+      // PostgreSQL permits non-ASCII characters, including Unicode spaces, in
+      // identifiers. JavaScript trim/\s would silently remove those identifiers.
+      const _trimSql = (_sql) => _sql.replace(/^[ \t\r\n\f]+|[ \t\r\n\f]+$/g, "");
+      const _isWordCharacter = (_character) => /[A-Za-z0-9_$\u0080-\uffff]/.test(_character);
       const _isPostgresqlEscapeStringQuote = (_sql, _quoteIndex) =>
         (_sql[_quoteIndex - 1] ?? "").toLowerCase() === "e" &&
         !_isWordCharacter(_sql[_quoteIndex - 2] ?? "");
@@ -1830,30 +2283,16 @@ WITH
         SQL_NUMERIC_LITERAL_PATTERN.test(_value) ||
         _isQuotedValue(_value);
 
-      const _toPostgresqlStringLiteral = (_value) => `'${_value.replace(/'/g, "''")}'`;
-
-      const _quoteBarePostgresqlDateTimeLiterals = (_sql) => {
-        const _protectedStore = _maskSqlProtectedSegments(_sql);
-        const _quotedSql = _protectedStore._masked.replace(
-          POSTGRESQL_BARE_DATE_TIME_LITERAL_PATTERN,
-          (_match, _prefix, _literal) => `${_prefix}${_toPostgresqlStringLiteral(_literal.trim())}`
-        );
-        return _restoreSqlProtectedSegments(_quotedSql, _protectedStore._segments);
+      const _toPostgresqlStringLiteral = (_value) => {
+        if (/[\\\r]/.test(_value)) {
+          return `E'${_value.replace(/\\/g, "\\\\").replace(/'/g, "''").replace(/\r/g, "\\r").replace(/\n/g, "\\n")}'`;
+        }
+        return `'${_value.replace(/'/g, "''")}'`;
       };
 
-      const _quoteParameterValue = (_value, _forceStringLiteral = false) => {
+      const _quoteParameterValue = (_value) => {
         const _trimmed = _value.trim();
-        if (!_trimmed) {
-          return _forceStringLiteral ? "''" : _trimmed;
-        }
-        if (_forceStringLiteral && _isQuotedValue(_trimmed)) {
-          return _trimmed;
-        }
-        if (!_forceStringLiteral && _isSqlLiteralValue(_trimmed)) {
-          return _trimmed;
-        }
-
-        return _toPostgresqlStringLiteral(_trimmed);
+        return !_trimmed ? "''" : _isSqlLiteralValue(_trimmed) ? _trimmed : _toPostgresqlStringLiteral(_trimmed);
       };
 
       const _splitParameterEntries = (_parametersText) => {
@@ -1864,8 +2303,10 @@ WITH
         let _isEscaped = false;
         let _parenDepth = 0;
         let _bracketDepth = 0;
+        let _braceDepth = 0;
 
-        for (const _character of _parametersText) {
+        for (let _index = 0; _index < _parametersText.length; _index += 1) {
+          const _character = _parametersText[_index];
           if (_quoteClose) {
             _current += _character;
             if (_quoteAllowsEscape && _character === "\\" && !_isEscaped) {
@@ -1880,10 +2321,24 @@ WITH
             continue;
           }
 
+          const _dollarQuoted = _readDollarQuotedSegment(_parametersText, _index);
+          if (_dollarQuoted) {
+            _current += _dollarQuoted;
+            _index += _dollarQuoted.length - 1;
+            continue;
+          }
+
           const _quotePair = PARAMETER_QUOTE_PAIRS[_character];
-          if (_quotePair) {
+          if (_quotePair && (!/[A-Za-z0-9_\u0080-\uffff]/.test(_current.at(-1) ?? "") ||
+              /(?:^|[=(:,{\[])\s*[EBXN]$/i.test(_current))) {
+            if (_character === "'") {
+              const _literal = _readSqlProtectedSegment(_parametersText, _index);
+              _current += _literal;
+              _index += _literal.length - 1;
+              continue;
+            }
             _quoteClose = _quotePair;
-            _quoteAllowsEscape = _character === "'" || _character === '"';
+            _quoteAllowsEscape = _character === '"';
             _current += _character;
             _isEscaped = false;
             continue;
@@ -1913,7 +2368,10 @@ WITH
             continue;
           }
 
-          if (_character === "," && _parenDepth === 0 && _bracketDepth === 0) {
+          if (_character === "{") _braceDepth += 1;
+          if (_character === "}") _braceDepth = Math.max(0, _braceDepth - 1);
+
+          if (_character === "," && _parenDepth === 0 && _bracketDepth === 0 && _braceDepth === 0) {
             const _entry = _current.trim();
             if (_entry) {
               _entries.push(_entry);
@@ -1933,152 +2391,90 @@ WITH
         return _entries;
       };
 
-      const _normalizeParameterEntry = (_entry) => {
-        const _match = _entry.match(PARAMETER_ENTRY_PATTERN);
-        if (!_match?.groups) {
-          return _entry;
-        }
-
-        return `${_match.groups.key} = ${_quoteParameterValue(_match.groups.value)}`;
-      };
-
       const _parseLoggedParameterValue = (_value) => {
-        const _match = _value.trim().match(/^(?<value>[\s\S]*?)\s*\((?<type>[A-Za-z0-9_.$\s-]+)\)\s*$/);
-        if (!_match?.groups) {
-          return {
-            _value: _value.trim(),
-            _type: ""
-          };
-        }
-
-        return {
-          _value: _match.groups.value.trim(),
-          _type: _match.groups.type.trim()
-        };
+        const _match = _value.match(/^(?<value>[\s\S]*)\((?<type>[A-Za-z0-9_.$ -]+)\)\r?$/);
+        return _match?.groups
+          ? { _value: _match.groups.value, _type: _match.groups.type.trim() }
+          : { _value, _type: "" };
       };
 
       const _isPostgresqlStringLikeParameterType = (_type) =>
         /char|string|text|clob|date|time|timestamp|instant|uuid|json|xml/i.test(_type);
 
-      const _isCompleteLogParameterEntry = (_entry) => {
-        const _trimmed = _entry.trim();
-        return (
-          /\([A-Za-z0-9_.$\s-]+\)$/.test(_trimmed) ||
-          /^null$/i.test(_trimmed) ||
-          /^(true|false)$/i.test(_trimmed) ||
-          SQL_NUMERIC_LITERAL_PATTERN.test(_trimmed) ||
-          _isQuotedValue(_trimmed)
-        );
-      };
-
       const _splitLogParameterEntries = (_parametersText) => {
+        // MyBatis prints raw values as value(Type), separated by exactly ", ".
+        // Quotes in a logged String are data, not SQL string delimiters.
         const _entries = [];
-        let _current = "";
-        let _quoteClose = "";
-        let _quoteAllowsEscape = false;
-        let _isEscaped = false;
-        let _parenDepth = 0;
-
-        for (const _character of _parametersText) {
-          if (_quoteClose) {
-            _current += _character;
-            if (_quoteAllowsEscape && _character === "\\" && !_isEscaped) {
-              _isEscaped = true;
-              continue;
-            }
-            if (_character === _quoteClose && !_isEscaped) {
-              _quoteClose = "";
-              _quoteAllowsEscape = false;
-            }
-            _isEscaped = false;
-            continue;
-          }
-
-          const _quotePair = PARAMETER_QUOTE_PAIRS[_character];
-          if (_quotePair) {
-            _quoteClose = _quotePair;
-            _quoteAllowsEscape = _character === "'" || _character === '"';
-            _current += _character;
-            _isEscaped = false;
-            continue;
-          }
-
-          if (_character === "(") {
-            _parenDepth += 1;
-            _current += _character;
-            continue;
-          }
-
-          if (_character === ")") {
-            _parenDepth = Math.max(0, _parenDepth - 1);
-            _current += _character;
-            continue;
-          }
-
-          if (_character === "," && _parenDepth === 0 && _isCompleteLogParameterEntry(_current)) {
-            const _entry = _current.trim();
-            if (_entry) {
-              _entries.push(_entry);
-            }
-            _current = "";
-            continue;
-          }
-
-          _current += _character;
+        const _separator = /(?:\([A-Za-z0-9_.$ -]+\)|\bnull), /g;
+        let _start = 0;
+        for (const _match of _parametersText.matchAll(_separator)) {
+          const _end = _match.index + _match[0].length - 2;
+          _entries.push(_parametersText.slice(_start, _end));
+          _start = _end + 2;
         }
-
-        const _entry = _current.trim();
-        if (_entry) {
-          _entries.push(_entry);
-        }
-
+        if (_start < _parametersText.length) _entries.push(_parametersText.slice(_start));
         return _entries;
       };
 
       const _formatLogPositionalBindLine = (_index, _value, _stripType = false, _type = "") => {
-        const _parameter = _stripType
-          ? _parseLoggedParameterValue(_value)
-          : { _value: _value.trim(), _type };
-        const _forceStringLiteral = _isPostgresqlStringLikeParameterType(_parameter._type) && !/^null$/i.test(_parameter._value);
-        return `${_index} = ${_quoteParameterValue(_parameter._value, _forceStringLiteral)}`;
+        const _parameter = _stripType ? _parseLoggedParameterValue(_value) : { _value, _type };
+        const _string = _isPostgresqlStringLikeParameterType(_parameter._type)
+          && (_stripType || !/^null$/i.test(_parameter._value));
+        const _literal = _string
+          ? _toPostgresqlStringLiteral(_parameter._value)
+          : _quoteParameterValue(_parameter._value);
+        return `${_index} = ${_literal}`;
       };
 
-      const _appendLogSqlLine = (_sqlLines, _line) => {
-        const _trimmed = _line.trim();
-        if (_trimmed) {
-          _sqlLines.push(_trimmed);
-        }
-      };
-
-      const _isMyBatisControlLine = (_line) => /^\s*(?:==>|<==)/.test(_line);
-
-      const _readDollarQuotedSegment = (_sql, _startIndex) => {
-        if (_sql[_startIndex] !== "$") {
+      const _readDollarQuotedSegment = (_sql, _startIndex, _status = null) => {
+        if (_sql[_startIndex] !== "$" || /[A-Za-z0-9_$\u0080-\uffff]/.test(_sql[_startIndex - 1] ?? "")) {
           return "";
         }
 
         const _slice = _sql.slice(_startIndex);
         const _delimiter = _slice.startsWith("$$")
           ? "$$"
-          : (_slice.match(/^\$[A-Za-z_][A-Za-z0-9_]*\$/)?.[0] ?? "");
+          : (_slice.match(/^\$[A-Za-z_\u0080-\uffff][A-Za-z0-9_\u0080-\uffff]*\$/)?.[0] ?? "");
         if (!_delimiter) {
           return "";
         }
 
         const _contentStartIndex = _startIndex + _delimiter.length;
         const _endIndex = _sql.indexOf(_delimiter, _contentStartIndex);
+        if (_status) _status._closed = _endIndex !== -1;
         return _sql.slice(_startIndex, _endIndex === -1 ? _sql.length : _endIndex + _delimiter.length);
       };
 
-      const _readSqlProtectedSegment = (_sql, _startIndex) => {
+      const _readSqlProtectedSegment = (_sql, _startIndex, _status = null) => {
         const _startCharacter = _sql[_startIndex];
-        const _dollarQuotedSegment = _readDollarQuotedSegment(_sql, _startIndex);
+        if (/^U&['"]/.test(_sql.slice(_startIndex, _startIndex + 3).toUpperCase()) &&
+            !/[A-Za-z0-9_$\u0080-\uffff]/.test(_sql[_startIndex - 1] ?? "")) {
+          const _quoted = _readSqlProtectedSegment(_sql, _startIndex + 2, _status);
+          let _end = _startIndex + 2 + _quoted.length;
+          // UESCAPE is part of the Unicode literal/identifier. Protect it as
+          // one unit so bind normalization cannot turn it into different data.
+          const _keywordStart = _skipSqlWhitespace(_sql, _end);
+          if (/^UESCAPE(?![A-Za-z0-9_$\u0080-\uffff])/i.test(_sql.slice(_keywordStart))) {
+            const _escapeStart = _skipSqlWhitespace(_sql, _keywordStart + 7);
+            if (_sql[_escapeStart] === "'") {
+              _end = _escapeStart + _readSqlProtectedSegment(_sql, _escapeStart, _status).length;
+            }
+          }
+          return _sql.slice(_startIndex, _end);
+        }
+        const _dollarQuotedSegment = _readDollarQuotedSegment(_sql, _startIndex, _status);
         if (_dollarQuotedSegment) {
           return _dollarQuotedSegment;
         }
 
+        if (/^[EBXN]'/i.test(_sql.slice(_startIndex, _startIndex + 2)) &&
+            !_isWordCharacter(_sql[_startIndex - 1] ?? "")) {
+          return _startCharacter + _readSqlProtectedSegment(_sql, _startIndex + 1, _status);
+        }
+
         if (_startCharacter === "'") {
           const _allowBackslashEscape = _isPostgresqlEscapeStringQuote(_sql, _startIndex);
+          let _closed = false;
           let _index = _startIndex + 1;
           while (_index < _sql.length) {
             const _character = _sql[_index];
@@ -2092,14 +2488,33 @@ WITH
             }
             if (_character === "'") {
               _index += 1;
+              _closed = true;
+              // A continued E string retains escape semantics after the
+              // newline, even though the following quote has no E prefix.
+              let _next = _index;
+              while (_next < _sql.length) {
+                if (/[ \t\r\n\f]/.test(_sql[_next])) { _next += 1; continue; }
+                if (_sql.startsWith("--", _next) || _sql.startsWith("/*", _next)) {
+                  _next += _readSqlProtectedSegment(_sql, _next).length;
+                  continue;
+                }
+                break;
+              }
+              if (/[\r\n]/.test(_sql.slice(_index, _next)) && _sql[_next] === "'") {
+                _index = _next + 1;
+                _closed = false;
+                continue;
+              }
               break;
             }
             _index += 1;
           }
+          if (_status) _status._closed = _closed;
           return _sql.slice(_startIndex, _index);
         }
 
         if (_startCharacter === '"') {
+          let _closed = false;
           let _index = _startIndex + 1;
           while (_index < _sql.length) {
             const _character = _sql[_index];
@@ -2109,10 +2524,12 @@ WITH
             }
             if (_character === '"') {
               _index += 1;
+              _closed = true;
               break;
             }
             _index += 1;
           }
+          if (_status) _status._closed = _closed;
           return _sql.slice(_startIndex, _index);
         }
 
@@ -2122,54 +2539,54 @@ WITH
         }
 
         if (_startCharacter === "/" && _sql[_startIndex + 1] === "*") {
-          const _endIndex = _sql.indexOf("*/", _startIndex + 2);
-          return _sql.slice(_startIndex, _endIndex === -1 ? _sql.length : _endIndex + 2);
-        }
-
-        if (_startCharacter === "`") {
-          const _endIndex = _sql.indexOf("`", _startIndex + 1);
-          return _sql.slice(_startIndex, _endIndex === -1 ? _sql.length : _endIndex + 1);
-        }
-
-        if (_startCharacter === "[") {
-          if (/[A-Za-z0-9_$)\]"`]/.test(_sql[_startIndex - 1] ?? "")) {
-            return "";
+          let _depth = 1;
+          let _index = _startIndex + 2;
+          while (_index < _sql.length && _depth > 0) {
+            const _pair = _sql.slice(_index, _index + 2);
+            if (_pair === "/*") { _depth += 1; _index += 2; }
+            else if (_pair === "*/") { _depth -= 1; _index += 2; }
+            else _index += 1;
           }
-
-          const _endIndex = _sql.indexOf("]", _startIndex + 1);
-          return _sql.slice(_startIndex, _endIndex === -1 ? _sql.length : _endIndex + 1);
+          if (_status) _status._closed = _depth === 0;
+          return _sql.slice(_startIndex, _index);
         }
 
         return "";
       };
 
-      const _maskSqlProtectedSegments = (_sql) => {
+      const _skipSqlWhitespace = (_sql, _start) => {
+        let _index = _start;
+        while (_index < _sql.length && /[ \t\r\n\f]/.test(_sql[_index])) _index += 1;
+        return _index;
+      };
+
+      const _maskSqlProtectedSegments = (_sql, _protectIdentifiers = false) => {
         const _segments = [];
+        // A caller's SQL must never be interpreted as one of our temporary tokens.
+        _segments._prefix = "@@BindSQL_SEGMENT_";
+        while (_sql.includes(_segments._prefix)) _segments._prefix += "X";
         let _masked = "";
         let _index = 0;
-
         while (_index < _sql.length) {
-          const _segment = _readSqlProtectedSegment(_sql, _index);
-          if (_segment) {
-            const _token = `@@BindSQL_SEGMENT_${_segments.length}@@`;
-            _segments.push(_segment);
-            _masked += _token;
-            _index += _segment.length;
-            continue;
+          let _segment = _readSqlProtectedSegment(_sql, _index);
+          if (!_segment && _protectIdentifiers && !/[A-Za-z0-9_$\u0080-\uffff]/.test(_sql[_index - 1] ?? "")) {
+            const _identifier = /^[A-Za-z_\u0080-\uffff][A-Za-z0-9_$\u0080-\uffff]*/.exec(_sql.slice(_index))?.[0];
+            if (_identifier && /[$\u0080-\uffff]/.test(_identifier)) _segment = _identifier;
           }
-
-          _masked += _sql[_index];
-          _index += 1;
+          if (_segment) {
+            _masked += `${_segments._prefix}${_segments.length}@@`;
+            _segments.push(_segment);
+            _index += _segment.length;
+          } else {
+            _masked += _sql[_index++];
+          }
         }
-
         return { _masked, _segments };
       };
 
       const _restoreSqlProtectedSegments = (_sql, _segments) =>
-        _sql.replace(/@@BindSQL_SEGMENT_(\d+)@@/g, (_all, _indexText) => {
-          const _index = Number(_indexText);
-          return _segments[_index] ?? "";
-        });
+        _sql.replace(new RegExp(`${_escapeRegExp(_segments._prefix)}(\\d+)@@`, "g"), (_all, _index) =>
+          _segments[Number(_index)] ?? _all);
 
       const _readQuotedSegment = (_sql, _startIndex, _closeQuote, _allowEscapes = false) => {
         let _index = _startIndex + 1;
@@ -2200,28 +2617,9 @@ WITH
       const _readHighlightProtectedSegment = (_sql, _startIndex) => {
         const _startCharacter = _sql[_startIndex];
 
-        if (_startCharacter === "-" && _sql[_startIndex + 1] === "-") {
-          const _endIndex = _sql.indexOf("\n", _startIndex);
-          return {
-            _kind: "comment",
-            _text: _sql.slice(_startIndex, _endIndex === -1 ? _sql.length : _endIndex + 1)
-          };
-        }
-
-        if (_startCharacter === "/" && _sql[_startIndex + 1] === "*") {
-          const _endIndex = _sql.indexOf("*/", _startIndex + 2);
-          return {
-            _kind: "comment",
-            _text: _sql.slice(_startIndex, _endIndex === -1 ? _sql.length : _endIndex + 2)
-          };
-        }
-
-        const _dollarQuotedSegment = _readDollarQuotedSegment(_sql, _startIndex);
-        if (_dollarQuotedSegment) {
-          return {
-            _kind: "string",
-            _text: _dollarQuotedSegment
-          };
+        const _protected = _readSqlProtectedSegment(_sql, _startIndex);
+        if (_protected) {
+          return { _kind: /^(?:--|\/\*)/.test(_protected) ? "comment" : "string", _text: _protected };
         }
 
         const _closeQuote = HIGHLIGHT_QUOTE_PAIRS[_startCharacter];
@@ -2396,7 +2794,8 @@ WITH
           return;
         }
 
-        const _highlightSource = _rawText || " ";
+        // pre collapses its final empty line, while textarea retains that line.
+        const _highlightSource = !_rawText || _rawText.endsWith("\n") ? _rawText + " " : _rawText;
         $rawHighlight.innerHTML = _buildHighlightedSqlHtml(_highlightSource);
         _syncInputHighlightScroll();
       };
@@ -2415,7 +2814,9 @@ WITH
       };
 
       const _renderOutputText = (_sql) => {
-        $output.value = _sql || _buildPlaceholderText();
+        const _text = _sql || _buildPlaceholderText();
+        // Avoid unnecessary writes when an input edit leaves the output intact.
+        if ($output.value !== _text) $output.value = _text;
       };
 
       const _isSupportedTheme = (_theme) => _theme === THEME_LIGHT || _theme === THEME_DARK;
@@ -2449,11 +2850,15 @@ WITH
           return;
         }
         $lightModeToggle.checked = _theme === THEME_LIGHT;
+        qsa('[data-mode-icon]').forEach(($icon) => {
+          $icon.hidden = $icon.dataset.modeIcon !== _theme;
+        });
       };
 
       const _applyColorScheme = (_theme) => {
         const _scheme = _theme === THEME_DARK ? THEME_DARK : THEME_LIGHT;
         document.documentElement.dataset.theme = _scheme;
+        document.documentElement.dataset.mode = _scheme;
         document.documentElement.style.colorScheme = _scheme;
         _syncModeToggleUi(_scheme);
       };
@@ -2488,39 +2893,55 @@ WITH
         _applyColorScheme(event.matches ? THEME_DARK : THEME_LIGHT);
       };
 
+      const _hasUnclosedParameterQuote = (_value) => {
+        const _text = _value.trimStart();
+        if (/^(?:'|[EBXN]'|U&'|\$)/i.test(_text)) {
+          const _status = { _closed: true };
+          _readSqlProtectedSegment(_text, 0, _status);
+          return !_status._closed;
+        }
+        const _quote = _text[0];
+        if (!['"', '“', '‘'].includes(_quote)) return false;
+        const _close = PARAMETER_QUOTE_PAIRS[_quote];
+        const _escape = _quote === '"';
+        for (let _index = 1; _index < _text.length; _index += 1) {
+          if (_escape && _text[_index] === "\\") { _index += 1; continue; }
+          if (_text[_index] === _close) {
+            if (_text[_index + 1] === _close) { _index += 1; continue; }
+            return false;
+          }
+        }
+        return true;
+      };
+
       const _normalizeBindValue = (_rawValue) => {
         const _value = _rawValue.trim();
-        if (!_value) {
-          return "";
+        if (!_value) return "''";
+        if (_value.startsWith('"') && _value.endsWith('"')) {
+          try { return _toPostgresqlStringLiteral(JSON.parse(_value)); } catch (_error) { /* Eclipse-style quotes */ }
+          return _toPostgresqlStringLiteral(_value.slice(1, -1).replace(/\\"|""/g, '"'));
         }
-
-        if (
-          (_value.startsWith('"') && _value.endsWith('"')) ||
-          (_value.startsWith("“") && _value.endsWith("”")) ||
-          (_value.startsWith("‘") && _value.endsWith("’"))
-        ) {
-          const _inner = _value.slice(1, -1).replace(/\\"/g, '"').replace(/'/g, "''");
-          return `'${_inner}'`;
+        if ((_value.startsWith("“") && _value.endsWith("”")) || (_value.startsWith("‘") && _value.endsWith("’"))) {
+          return _toPostgresqlStringLiteral(_value.slice(1, -1));
         }
-
-        if (/^null$/i.test(_value)) {
-          return "NULL";
-        }
-
-        if (/^(true|false)$/i.test(_value)) {
-          return _value.toUpperCase();
-        }
-
-        if (SQL_NUMERIC_LITERAL_PATTERN.test(_value) || (_value.startsWith("'") && _value.endsWith("'"))) {
-          return _value;
-        }
-
+        if (/^(null|true|false)$/i.test(_value)) return _value.toUpperCase();
+        if (SQL_NUMERIC_LITERAL_PATTERN.test(_value)) return _value;
+        // Accept exactly one literal. A trailing statement is data, never SQL.
+        if (/^(?:'|[EBXN]'|U&'|\$)/i.test(_value) && !_hasUnclosedParameterQuote(_value) &&
+            _readSqlProtectedSegment(_value, 0).length === _value.length) return _value;
         return _toPostgresqlStringLiteral(_value);
+      };
+
+      const _isParameterLiteralContinuation = (_value, _line) => {
+        const _text = _value.trim();
+        if (!/^(?:'|[EBXN]'|U&')/i.test(_text) || !/^(?:'|UESCAPE\b)/i.test(_line.trimStart())) return false;
+        const _combined = _text + "\n" + _line.trimEnd();
+        return _readSqlProtectedSegment(_combined, 0).length === _combined.length;
       };
 
       const _isBindDefinitionLine = (_trimmed, _allowBareName = false, _allowSqlAssignmentName = false) => {
         const _positionalMatch = _trimmed.match(POSITIONAL_BIND_PATTERN);
-        if (_positionalMatch?.groups?.value) {
+        if (_positionalMatch?.groups?.value !== undefined) {
           return true;
         }
 
@@ -2544,24 +2965,25 @@ WITH
         return !SQL_ASSIGNMENT_NAMES.has(_namedMatch.groups.name.toUpperCase());
       };
 
-      const _isAmbiguousPositionalPredicateLine = (_trimmed) => {
-        const _match = _trimmed.match(POSITIONAL_BIND_PATTERN);
-        if (!_match?.groups?.indexB || !_match.groups.value) {
-          return false;
+      const _sqlAwaitsExpression = (_sql) => {
+        let _previous = "", _last = "";
+        for (const _token of _sqlLexemes(_sql)) {
+          if (/^protected:(?:--|\/\*)/.test(_token)) continue;
+          _previous = _last;
+          _last = _token;
         }
-
-        return _match.groups.indexB === _match.groups.value.trim();
-      };
-
-      const _getPreviousNonEmptySqlLine = (_sqlLines) => {
-        for (let _index = _sqlLines.length - 1; _index >= 0; _index -= 1) {
-          const _trimmed = _sqlLines[_index].trim();
-          if (_trimmed) {
-            return _trimmed;
-          }
+        // A predicate such as 1=1 or id=1 is SQL when the preceding code still
+        // needs an operand. Comments do not end that context. Qualified column
+        // names and named placeholders remain operands even if named WHERE.
+        if (_last.startsWith("word:") && !["symbol:.", "symbol::"].includes(_previous)) {
+          if (_last === "word:all" && _previous === "word:limit") return false;
+          if (_last === "word:by") return /^word:(?:order|group|partition)$/.test(_previous);
+          // Unreserved words such as FIRST, ROWS, SET and VALUES can themselves
+          // be the final column name. Do not mistake them for incomplete SQL.
+          return /^(?:select|where|and|or|on|having|when|then|else|returning|not|as|in|is|like|ilike|similar|from|using|join|all|distinct|leading|both|trailing|limit|offset)$/.test(_last.slice(5));
         }
-
-        return "";
+        if (_last === "symbol:*" && /^(?:symbol:[.,]|word:(?:select|all|distinct|returning))$/.test(_previous)) return false;
+        return /^symbol:(?:[(,]|[+\-*\/<>=~!@#%^&|`]+)$/.test(_last);
       };
 
       const _hasImplicitBindPlaceholders = (_sqlLines) => {
@@ -2570,18 +2992,15 @@ WITH
           return false;
         }
 
-        const _maskedSql = _maskSqlProtectedSegments(_sqlText)._masked;
-        if (_countNamedPlaceholders(_maskedSql).size > 0) {
+        const _store = _maskSqlProtectedSegments(_sqlText);
+        const _maskedSql = _store._masked;
+        if (_countNamedPlaceholders(_maskedSql, _store._segments).size > 0) {
           return true;
         }
 
-        for (let _index = 0; _index < _maskedSql.length; _index += 1) {
-          if (_maskedSql[_index] === "?" && !_isPostgresqlQuestionMarkOperator(_maskedSql, _index)) {
-            return true;
-          }
-        }
-
-        return false;
+        let _found = false;
+        _replacePositionalBindPlaceholders(_maskedSql, () => { _found = true; return "?"; }, _store._segments);
+        return _found;
       };
 
       const _getImplicitNamedPlaceholderCounts = (_sqlLines) => {
@@ -2590,7 +3009,8 @@ WITH
           return new Map();
         }
 
-        return _countNamedPlaceholders(_maskSqlProtectedSegments(_sqlText)._masked);
+        const _store = _maskSqlProtectedSegments(_sqlText);
+        return _countNamedPlaceholders(_store._masked, _store._segments);
       };
 
       const _getBareNamedBindDefinitionName = (_trimmed) => {
@@ -2627,6 +3047,7 @@ WITH
       };
 
       const _shouldTreatAsBindDefinitionLine = (_trimmed, _lines, _lineIndex, _sqlLines, _bindSectionStarted) => {
+        if (!_isBindDefinitionLine(_trimmed, true, true)) return false;
         const _namedPlaceholderCounts = _bindSectionStarted
           ? new Map()
           : _getImplicitNamedPlaceholderCounts(_sqlLines);
@@ -2642,8 +3063,7 @@ WITH
           return true;
         }
 
-        const _previousSqlLine = _getPreviousNonEmptySqlLine(_sqlLines);
-        if (_isAmbiguousPositionalPredicateLine(_trimmed) && /^(?:WHERE|AND|OR)$/i.test(_previousSqlLine)) {
+        if (_sqlAwaitsExpression(_sqlLines.join("\n"))) {
           return false;
         }
 
@@ -2652,7 +3072,7 @@ WITH
       };
 
       const _buildLogInputResult = (_sqlText, _bindLines) => {
-        const _trimmedSql = _sqlText.trim();
+        const _trimmedSql = _trimSql(_sqlText);
         if (!_trimmedSql) {
           return null;
         }
@@ -2663,54 +3083,13 @@ WITH
         };
       };
 
-      const _parseMyBatisLogInput = (_inputText) => {
-        const _sqlLines = [];
-        let _parametersText = "";
-        let _isCollectingSql = false;
-
-        for (const _line of _inputText.split(/\r?\n/)) {
-          const _preparingMatch = _line.match(/==>\s*Preparing:\s*(?<sql>.*)$/i);
-          if (_preparingMatch?.groups) {
-            _sqlLines.length = 0;
-            _appendLogSqlLine(_sqlLines, _preparingMatch.groups.sql);
-            _isCollectingSql = true;
-            continue;
-          }
-
-          const _parametersMatch = _line.match(/==>\s*Parameters:\s*(?<parameters>.*)$/i);
-          if (_parametersMatch?.groups) {
-            _parametersText = _parametersMatch.groups.parameters;
-            _isCollectingSql = false;
-            continue;
-          }
-
-          if (_isCollectingSql) {
-            if (_isMyBatisControlLine(_line)) {
-              _isCollectingSql = false;
-              continue;
-            }
-
-            _appendLogSqlLine(_sqlLines, _line);
-          }
-        }
-
-        if (_sqlLines.length === 0) {
-          return null;
-        }
-
-        const _bindLines = _splitLogParameterEntries(_parametersText)
-          .map((_entry, _index) => _formatLogPositionalBindLine(_index + 1, _entry, true));
-
-        return _buildLogInputResult(_sqlLines.join("\n"), _bindLines);
-      };
-
       const _parseHibernateSqlLine = (_line) => {
         const _showSqlMatch = _line.match(/\bHibernate:\s*(?<sql>.+)$/i);
         if (_showSqlMatch?.groups?.sql) {
           return _showSqlMatch.groups.sql;
         }
 
-        const _loggerMatch = _line.match(/\borg\.hibernate\.SQL\b.*?(?:-|:)\s*(?<sql>(?:SELECT|INSERT|UPDATE|DELETE|MERGE|WITH)\b.+)$/i);
+        const _loggerMatch = _line.match(HIBERNATE_SQL_PATTERN);
         return _loggerMatch?.groups?.sql ?? "";
       };
 
@@ -2723,70 +3102,6 @@ WITH
         }
 
         return "";
-      };
-
-      const _parseHibernateLogInput = (_inputText) => {
-        const _sqlLines = [];
-        const _bindLines = [];
-        let _isCollectingSql = false;
-
-        for (const _line of _inputText.split(/\r?\n/)) {
-          const _showSqlStartMatch = _line.match(/\bHibernate:\s*(?<sql>.*)$/i);
-          if (_showSqlStartMatch?.groups) {
-            _sqlLines.length = 0;
-            _appendLogSqlLine(_sqlLines, _showSqlStartMatch.groups.sql);
-            _isCollectingSql = true;
-            continue;
-          }
-
-          const _lineSqlText = _parseHibernateSqlLine(_line);
-          if (_lineSqlText) {
-            _sqlLines.length = 0;
-            _appendLogSqlLine(_sqlLines, _lineSqlText);
-            _isCollectingSql = true;
-            continue;
-          }
-
-          const _bindLine = _parseHibernateBindLine(_line);
-          if (_bindLine) {
-            _isCollectingSql = false;
-            _bindLines.push(_bindLine);
-            continue;
-          }
-
-          if (_isCollectingSql) {
-            _appendLogSqlLine(_sqlLines, _line);
-          }
-        }
-
-        if (_sqlLines.length === 0) {
-          return null;
-        }
-
-        return _buildLogInputResult(_sqlLines.join("\n"), _bindLines);
-      };
-
-      const _extractSpringJdbcPreparedSql = (_inputText) => {
-        const _startMatch = /\bExecuting prepared SQL statement\s*\[/i.exec(_inputText);
-        if (!_startMatch) {
-          return "";
-        }
-
-        const _sqlStartIndex = _startMatch.index + _startMatch[0].length;
-        const _lineEndIndex = _inputText.indexOf("\n", _sqlStartIndex);
-        const _sameLineEndIndex = _lineEndIndex === -1 ? _inputText.length : _lineEndIndex;
-        const _sameLineCloseIndex = _inputText.lastIndexOf("]", _sameLineEndIndex);
-        if (_sameLineCloseIndex >= _sqlStartIndex) {
-          return _inputText.slice(_sqlStartIndex, _sameLineCloseIndex);
-        }
-
-        const _tail = _inputText.slice(_sqlStartIndex);
-        const _nextParameterLineIndex = _tail.search(/\r?\n[^\n]*\bcolumn index\s+\d+\s*,\s*parameter value\b/i);
-        const _searchEndIndex = _nextParameterLineIndex === -1
-          ? _inputText.length
-          : _sqlStartIndex + _nextParameterLineIndex;
-        const _closeIndex = _inputText.lastIndexOf("]", _searchEndIndex);
-        return _closeIndex >= _sqlStartIndex ? _inputText.slice(_sqlStartIndex, _closeIndex) : "";
       };
 
       const _parseSpringJdbcParameterLine = (_line) => {
@@ -2817,71 +3132,250 @@ WITH
         };
       };
 
-      const _parseSpringJdbcLogInput = (_inputText) => {
-        const _sqlText = _extractSpringJdbcPreparedSql(_inputText);
-        if (!_sqlText) {
-          return null;
-        }
 
-        const _bindLines = [];
-        for (const _line of _inputText.split(/\r?\n/)) {
-          const _parameter = _parseSpringJdbcParameterLine(_line);
-          if (_parameter) {
-            _bindLines.push(_formatLogPositionalBindLine(_parameter._index, _parameter._value, false, _parameter._type));
-          }
+      const _hasOpenSqlRegion = (_sql) => {
+        for (let _index = 0; _index < _sql.length;) {
+          const _status = { _closed: true };
+          const _segment = _readSqlProtectedSegment(_sql, _index, _status);
+          if (!_status._closed) return true;
+          _index += _segment.length || 1;
         }
-
-        return _buildLogInputResult(_sqlText, _bindLines);
+        return false;
       };
 
-      const _parseSupportedLogInput = (_inputText) =>
-        _parseMyBatisLogInput(_inputText) ??
-        _parseHibernateLogInput(_inputText) ??
-        _parseSpringJdbcLogInput(_inputText);
+      const LOG_RECORD_PATTERNS = [
+        ["mybatis-sql", /==>\s*Preparing:/i],
+        ["mybatis-bind", /==>\s*Parameters:/i],
+        ["hibernate-sql", /\b(?:Hibernate:|org\.hibernate\.SQL\b)/i],
+        ["hibernate-bind", /\bbinding parameter\s*[[(]/i],
+        ["spring-sql", /\bExecuting prepared SQL statement\s*\[/i],
+        ["spring-bind", /\bcolumn index\s+\d+\s*,\s*parameter value\s*\[/i]
+      ];
+
+      const _logRecord = (_line) => {
+        let _record = null;
+        for (const [_kind, _pattern] of LOG_RECORD_PATTERNS) {
+          const _match = _pattern.exec(_line);
+          if (_match && (!_record || _match.index < _record._match.index)) _record = { _kind, _match };
+        }
+        return _record;
+      };
+
+      const _parseSupportedLogInput = (_inputText) => {
+        let _current = null;
+        let _pendingBind = null;
+        const _incompleteBinds = [];
+        let _offset = 0;
+        let _skipUntil = 0;
+        const _finishBind = () => {
+          if (!_pendingBind) return true;
+          const { _kind, _text } = _pendingBind;
+          let _binds;
+          if (_kind === "mybatis") {
+            const _entries = _splitLogParameterEntries(_text);
+            if (!_entries.length) return false;
+            // MyBatis always appends a Java type to non-null values. Requiring
+            // that terminator prevents a truncated/multiline value becoming SQL.
+            if (_entries.some(_entry => _entry !== "null" && !_parseLoggedParameterValue(_entry)._type)) return false;
+            _binds = _entries.map((_entry, _index) => _formatLogPositionalBindLine(_index + 1, _entry, true));
+          } else if (_kind === "hibernate") {
+            const _bind = _parseHibernateBindLine(_text);
+            if (!_bind) return false;
+            _binds = [_bind];
+          } else {
+            const _parameter = _parseSpringJdbcParameterLine(_text);
+            if (!_parameter) return false;
+            _binds = [_formatLogPositionalBindLine(_parameter._index, _parameter._value, false, _parameter._type)];
+          }
+          for (const _bind of _binds) _current._bindLines.push(_bind);
+          _pendingBind = null;
+          return true;
+        };
+        const _rejectIncompleteBind = () => {
+          if (!_pendingBind) return;
+          if (_pendingBind._kind !== "mybatis" || _pendingBind._text !== "") {
+            // Once a value is unfinished, a later record marker could itself
+            // be part of that value. Keep the error even if a new SQL follows.
+            _incompleteBinds.push(_pendingBind._kind === "mybatis"
+              ? _pendingBind._prefix + " " + _pendingBind._text : _pendingBind._text);
+          }
+          _pendingBind = null;
+        };
+        for (const _line of _inputText.split("\n")) {
+          const _lineOffset = _offset;
+          _offset += _line.length + 1;
+          if (_lineOffset < _skipUntil) continue;
+          const _record = _logRecord(_line);
+          if (_pendingBind) {
+            // Do not absorb a later SQL/bind record into an unfinished value.
+            if (_record || /^\s*(?:==>|<==)/.test(_line) || /^\d{4}-\d{2}-\d{2}.*\b(?:TRACE|DEBUG|INFO|WARN|ERROR)\b/.test(_line)) {
+              _rejectIncompleteBind();
+            } else {
+              _pendingBind._text += "\n" + _line;
+              _finishBind();
+              continue;
+            }
+          }
+          // Control-looking text inside SQL literals/comments remains SQL data.
+          if (_record && _current?._collecting && _hasOpenSqlRegion(_current._sqlLines.join("\n"))) {
+            _current._sqlLines.push(_line);
+            continue;
+          }
+          if (_record?._kind.endsWith("-sql")) {
+            const _kind = _record._kind.split("-")[0];
+            let _sql = "";
+            if (_kind === "mybatis") _sql = _line.slice(_record._match.index + _record._match[0].length).replace(/^[ \t\r\f]+/, "");
+            if (_kind === "hibernate") _sql = _parseHibernateSqlLine(_line);
+            if (_kind === "spring") {
+              const _start = _lineOffset + _record._match.index + _record._match[0].length;
+              const _block = _readBracketedSql(_inputText, _start);
+              if (!_block) return null;
+              _sql = _block._sql;
+              _skipUntil = _block._end;
+            }
+            _current = { _kind, _sqlLines: [_sql], _bindLines: [], _collecting: _kind !== "spring" };
+            continue;
+          }
+          if (_record?._kind.endsWith("-bind")) {
+            if (!_current || !_record._kind.startsWith(_current._kind)) continue;
+            _current._collecting = false;
+            const _text = _current._kind === "mybatis"
+              ? _line.slice(_record._match.index + _record._match[0].length).replace(/^ /, "").replace(/\r$/, "")
+              : _line.slice(_record._match.index);
+            _pendingBind = { _kind: _current._kind, _text, _prefix: _record._match[0] };
+            _finishBind();
+            continue;
+          }
+          if (_current?._collecting) {
+            if (/^\s*(?:==>|<==)/.test(_line) || /^\d{4}-\d{2}-\d{2}.*\b(?:TRACE|DEBUG|INFO|WARN|ERROR)\b/.test(_line)) {
+              _current._collecting = false;
+            } else {
+              _current._sqlLines.push(_line);
+            }
+          }
+        }
+        _rejectIncompleteBind();
+        return _current ? _buildLogInputResult(_current._sqlLines.join("\n"), _current._bindLines.concat(_incompleteBinds)) : null;
+      };
+
+      const _readBracketedSql = (_input, _start) => {
+        let _depth = 1;
+        for (let _index = _start; _index < _input.length; _index += 1) {
+          const _segment = _readSqlProtectedSegment(_input, _index);
+          if (_segment) { _index += _segment.length - 1; continue; }
+          if (_input[_index] === "[") _depth += 1;
+          if (_input[_index] === "]" && --_depth === 0) return { _sql: _input.slice(_start, _index), _end: _index + 1 };
+        }
+        return null;
+      };
+
+      const _parseSqlParameterBlock = (_input) => {
+        const _start = /^\s*sql\s*=\s*\[/i.exec(_input);
+        if (!_start) return null;
+        const _block = _readBracketedSql(_input, _start[0].length);
+        if (!_block) return null;
+        const _parameters = /^\s*(?:parameters?|params?)\s*=\s*\[([\s\S]*)\]\s*$/i.exec(_input.slice(_block._end));
+        return _parameters ? { _sqlText: _trimSql(_block._sql), _bindLines: _splitParameterEntries(_parameters[1]) } : null;
+      };
+
+      const _hasFollowingBindDefinitions = (_lines, _start) => {
+        let _found = false;
+        for (let _index = _start; _index < _lines.length; _index += 1) {
+          const _line = _lines[_index].trim();
+          if (!_line) continue;
+          if (!_isBindDefinitionLine(_line, true, true)) return false;
+          _found = true;
+        }
+        return _found;
+      };
 
       const _splitInputText = (_inputText) => {
-        const _logInput = _parseSupportedLogInput(_inputText);
+        let _codeStart = 0;
+        while (_codeStart < _inputText.length) {
+          if (/[ \t\r\n\f]/.test(_inputText[_codeStart])) { _codeStart += 1; continue; }
+          if (_inputText.startsWith("--", _codeStart) || _inputText.startsWith("/*", _codeStart)) {
+            _codeStart += _readSqlProtectedSegment(_inputText, _codeStart).length;
+            continue;
+          }
+          break;
+        }
+        const _firstCode = _inputText.slice(_codeStart);
+        const _firstWord = /^[A-Za-z]+/.exec(_firstCode)?.[0].toUpperCase();
+        const _startsWithSql = SQL_STATEMENT_STARTS.has(_firstWord)
+          || /^(?:SQL\s*[:=]|[('"$])/i.test(_firstCode);
+        const _logInput = _startsWithSql ? null : _parseSupportedLogInput(_inputText);
         if (_logInput) {
           return _logInput;
         }
 
-        const _parameterBlockMatch = _inputText.match(SQL_PARAMETER_BLOCK_PATTERN);
-        if (_parameterBlockMatch?.groups) {
-          return {
-            _sqlText: _parameterBlockMatch.groups.sql.trim(),
-            _bindLines: _splitParameterEntries(_parameterBlockMatch.groups.parameters).map(_normalizeParameterEntry)
-          };
-        }
+        const _parameterBlock = _parseSqlParameterBlock(_inputText);
+        if (_parameterBlock) return _parameterBlock;
 
         const _sqlLines = [];
         const _bindLines = [];
         let _bindSectionStarted = false;
 
-        const _lines = _inputText.split(/\r?\n/);
+        // Mark line starts inside strings/comments before recognizing bind headers.
+        const _protectedLines = new Set();
+        let _sourceLine = 0;
+        for (let _index = 0; _index < _inputText.length;) {
+          const _segment = _readSqlProtectedSegment(_inputText, _index);
+          if (_segment) {
+            for (let _offset = 0; _offset < _segment.length; _offset += 1) {
+              if (_segment[_offset] === "\n") {
+                _sourceLine += 1;
+                if (_offset + 1 < _segment.length) _protectedLines.add(_sourceLine);
+              }
+            }
+            _index += _segment.length;
+          } else {
+            if (_inputText[_index] === "\n") _sourceLine += 1;
+            _index += 1;
+          }
+        }
+        const _lines = _inputText.split("\n");
+        // An implicit bind block must be a suffix consisting only of bind
+        // definitions. Rule out other lines once, before scanning SQL context;
+        // otherwise every multiline predicate rescans the growing SQL prefix.
+        let _implicitBindStart = _lines.length;
+        for (let _index = _lines.length - 1; _index >= 0; _index -= 1) {
+          const _trimmed = _lines[_index].trim();
+          if (_trimmed && !_isBindDefinitionLine(_trimmed, true, true)) break;
+          _implicitBindStart = _index;
+        }
         for (let _lineIndex = 0; _lineIndex < _lines.length; _lineIndex += 1) {
           const _line = _lines[_lineIndex];
           const _trimmed = _line.trim();
-          if (!_trimmed) {
-            if (!_bindSectionStarted) {
-              _sqlLines.push("");
+          if (_bindSectionStarted) {
+            const _last = _bindLines.at(-1);
+            const _value = _last?.match(PARAMETER_ENTRY_PATTERN)?.groups?.value;
+            if (_value !== undefined && (_hasUnclosedParameterQuote(_value) || _isParameterLiteralContinuation(_value, _line))) {
+              _bindLines[_bindLines.length - 1] += "\n" + _line;
+            } else if (_trimmed && !BIND_HEADER_PATTERN.test(_trimmed)) {
+              _bindLines.push(_line);
             }
             continue;
           }
+          if (_protectedLines.has(_lineIndex)) {
+            _sqlLines.push(_line);
+            continue;
+          }
+          if (!_trimmed) {
+            _sqlLines.push(_line);
+            continue;
+          }
 
-          if (BIND_HEADER_PATTERN.test(_trimmed)) {
+          if (BIND_HEADER_PATTERN.test(_trimmed) && (_trimmed.endsWith(":") ||
+              _hasFollowingBindDefinitions(_lines, _lineIndex + 1))) {
             _bindSectionStarted = true;
             continue;
           }
 
-          const _treatAsBindDefinition = _shouldTreatAsBindDefinitionLine(_trimmed, _lines, _lineIndex, _sqlLines, _bindSectionStarted);
-          if (_bindSectionStarted && _treatAsBindDefinition) {
-            _bindLines.push(_trimmed);
-            continue;
-          }
-
-          const _sqlPrefixMatch = _line.match(SQL_PREFIX_PATTERN);
+          const _treatAsBindDefinition = _lineIndex >= _implicitBindStart &&
+            _shouldTreatAsBindDefinitionLine(_trimmed, _lines, _lineIndex, _sqlLines, _bindSectionStarted);
+          const _sqlPrefixMatch = _sqlLines.every((_value) => !_value.trim()) ? _line.match(SQL_PREFIX_PATTERN) : null;
           if (_sqlPrefixMatch?.groups?.sql) {
-            _sqlLines.push(_sqlPrefixMatch.groups.sql.trim());
+            _sqlLines.push(_trimSql(_sqlPrefixMatch.groups.sql));
             continue;
           }
 
@@ -2895,7 +3389,7 @@ WITH
         }
 
         return {
-          _sqlText: _sqlLines.join("\n").trim(),
+          _sqlText: _trimSql(_sqlLines.join("\n")),
           _bindLines
         };
       };
@@ -2903,6 +3397,7 @@ WITH
       const _parseBindVariables = (_bindLines) => {
         const _named = new Map();
         const _positional = new Map();
+        const _issues = [];
 
         for (const _line of _bindLines) {
           const _trimmed = _line.trim();
@@ -2910,15 +3405,28 @@ WITH
             continue;
           }
 
+          const _entry = _trimmed.match(PARAMETER_ENTRY_PATTERN);
+          if (!_entry?.groups || _hasUnclosedParameterQuote(_entry.groups.value)) {
+            _issues.push(_trimmed.replace(/\s+/g, " "));
+            continue;
+          }
           const _namedMatch = _trimmed.match(NAMED_BIND_PATTERN);
           if (_namedMatch?.groups) {
+            if (_named.has(_namedMatch.groups.name)) {
+              _issues.push(MESSAGES.extraNamed(_formatNamedBindList([_namedMatch.groups.name]), 1));
+              continue;
+            }
             _named.set(_namedMatch.groups.name, _normalizeBindValue(_namedMatch.groups.value));
             continue;
           }
 
           const _positionalMatch = _trimmed.match(POSITIONAL_BIND_PATTERN);
-          if (_positionalMatch?.groups?.value) {
+          if (_positionalMatch?.groups?.value !== undefined) {
             const _index = Number(_positionalMatch.groups.indexA ?? _positionalMatch.groups.indexB ?? "0");
+            if (_index < 1 || !Number.isSafeInteger(_index) || _positional.has(_index)) {
+              _issues.push(MESSAGES.extraPositional(_formatPositionalBindList([_index]), 1));
+              continue;
+            }
             if (_index > 0) {
               _positional.set(_index, _normalizeBindValue(_positionalMatch.groups.value));
             }
@@ -2927,39 +3435,64 @@ WITH
 
         return {
           _named,
-          _positional
+          _positional,
+          _issues
         };
       };
 
-      const _countNamedPlaceholders = (_sql) => {
-        const _counts = new Map();
-        for (const _match of _sql.matchAll(NAMED_PLACEHOLDER_PATTERN)) {
-          const _name = _match.groups?.name ?? "";
-          if (!_name) {
-            continue;
-          }
+      const _withoutMaskedComments = (_sql, _segments) => _segments
+        ? _sql.replace(new RegExp(`${_escapeRegExp(_segments._prefix)}(\\d+)@@`, "g"), (_token, _index) =>
+          /^(?:--|\/\*)/.test(_segments[Number(_index)] ?? "") ? " ".repeat(_token.length) : _token)
+        : _sql;
 
-          _counts.set(_name, (_counts.get(_name) ?? 0) + 1);
+      const _namedPlaceholders = (_sql, _segments) => {
+        _sql = _withoutMaskedComments(_sql, _segments);
+        const _matches = [];
+        const _brackets = [];
+        let _parenDepth = 0;
+        for (let _index = 0; _index < _sql.length; _index += 1) {
+          const _character = _sql[_index];
+          if (_character === "(") _parenDepth += 1;
+          if (_character === ")") _parenDepth -= 1;
+          if (_character === "[") {
+            const _previous = _sql[_findPreviousNonSpaceIndex(_sql, _index)];
+            const _array = _readPreviousUnqualifiedWord(_sql, _index).toUpperCase() === "ARRAY" ||
+              (Boolean(_brackets.at(-1)?._array) && (_previous === "[" || _previous === ","));
+            _brackets.push({ _parenDepth, _array });
+          }
+          if (_character === "]") _brackets.pop();
+          if (_character !== ":" || /[:A-Za-z0-9_$]/.test(_sql[_index - 1] ?? "")) continue;
+          // At the top level of a subscript, colon denotes an array slice.
+          const _bracket = _brackets.at(-1);
+          if (_bracket && !_bracket._array && _bracket._parenDepth === _parenDepth) continue;
+          const _match = /^:([A-Za-z_][A-Za-z0-9_$]*)/.exec(_sql.slice(_index));
+          if (_match) {
+            _matches.push({ _index, _length: _match[0].length, _name: _match[1] });
+            _index += _match[0].length - 1;
+          }
         }
+        return _matches;
+      };
+
+      const _countNamedPlaceholders = (_sql, _segments) => {
+        const _counts = new Map();
+        for (const { _name } of _namedPlaceholders(_sql, _segments)) _counts.set(_name, (_counts.get(_name) ?? 0) + 1);
         return _counts;
       };
 
       const _formatNamedBindList = (_names) => _names.map((_name) => `:${_name}`).join(", ");
       const _formatPositionalBindList = (_indexes) => _indexes.map((_index) => `[${_index}]`).join(", ");
 
-      const _replaceNamedBind = (_sql, _name, _value) => {
-        const _pattern = new RegExp(`(^|[^:]):${_escapeRegExp(_name)}\\b`, "g");
-        let _count = 0;
-        const _nextSql = _sql.replace(_pattern, (_all, _prefix) => {
-          _count += 1;
-          return `${_prefix}${_value}`;
-        });
-        return { _nextSql, _count };
-      };
-
       const POSTGRESQL_QUESTION_OPERATOR_PREVIOUS_KEYWORDS = new Set([
+        "ALL",
+        "AS",
+        "DISTINCT",
+        "VARIADIC",
         "AND",
         "BETWEEN",
+        "BOTH",
+        "ASYMMETRIC",
+        "SYMMETRIC",
         "BY",
         "CASE",
         "ELSE",
@@ -2967,19 +3500,21 @@ WITH
         "FROM",
         "FETCH",
         "FIRST",
+        "FOR",
         "HAVING",
         "ILIKE",
         "IN",
         "IS",
         "JOIN",
+        "LEADING",
         "LIKE",
         "LIMIT",
         "NEXT",
         "NOT",
-        "NULL",
         "OFFSET",
         "ON",
         "OR",
+        "PLACING",
         "ROW",
         "ROWS",
         "RETURNING",
@@ -2988,8 +3523,7 @@ WITH
         "SIMILAR",
         "THEN",
         "TO",
-        "TRUE",
-        "FALSE",
+        "TRAILING",
         "USING",
         "VALUES",
         "WHEN",
@@ -2998,7 +3532,7 @@ WITH
 
       const _findPreviousNonSpaceIndex = (_sql, _index) => {
         let _previousIndex = _index - 1;
-        while (_previousIndex >= 0 && /\s/.test(_sql[_previousIndex] ?? "")) {
+        while (_previousIndex >= 0 && /[ \t\r\n\f]/.test(_sql[_previousIndex] ?? "")) {
           _previousIndex -= 1;
         }
         return _previousIndex;
@@ -3006,7 +3540,7 @@ WITH
 
       const _findNextNonSpaceIndex = (_sql, _index) => {
         let _nextIndex = _index + 1;
-        while (_nextIndex < _sql.length && /\s/.test(_sql[_nextIndex] ?? "")) {
+        while (_nextIndex < _sql.length && /[ \t\r\n\f]/.test(_sql[_nextIndex] ?? "")) {
           _nextIndex += 1;
         }
         return _nextIndex;
@@ -3014,51 +3548,82 @@ WITH
 
       const _readPreviousWord = (_sql, _index) => {
         let _wordEndIndex = _findPreviousNonSpaceIndex(_sql, _index);
-        if (!/[A-Za-z0-9_$]/.test(_sql[_wordEndIndex] ?? "")) {
+        if (!/[A-Za-z0-9_$\u0080-\uffff]/.test(_sql[_wordEndIndex] ?? "")) {
           return "";
         }
 
         let _wordStartIndex = _wordEndIndex;
-        while (_wordStartIndex > 0 && /[A-Za-z0-9_$]/.test(_sql[_wordStartIndex - 1] ?? "")) {
+        while (_wordStartIndex > 0 && /[A-Za-z0-9_$\u0080-\uffff]/.test(_sql[_wordStartIndex - 1] ?? "")) {
           _wordStartIndex -= 1;
         }
         return _sql.slice(_wordStartIndex, _wordEndIndex + 1);
       };
 
-      const _hasExpressionBeforeQuestionOperator = (_sql, _index) => {
+      const _readPreviousUnqualifiedWord = (_sql, _index) => {
+        const _word = _readPreviousWord(_sql, _index);
+        const _start = _findPreviousNonSpaceIndex(_sql, _index) - _word.length + 1;
+        return _sql[_findPreviousNonSpaceIndex(_sql, _start)] === "." ? "" : _word;
+      };
+
+      const _hasExpressionBeforeQuestionOperator = (_sql, _index, _questionKinds) => {
         const _previousIndex = _findPreviousNonSpaceIndex(_sql, _index);
         const _previousCharacter = _sql[_previousIndex] ?? "";
-        if (!/[A-Za-z0-9_$)\]"@]/.test(_previousCharacter)) {
+        if (_previousCharacter === "?") return !_questionKinds.get(_previousIndex);
+        if (!/[A-Za-z0-9_$\u0080-\uffff)\]"@]/.test(_previousCharacter)) {
           return false;
         }
 
-        const _previousWord = _readPreviousWord(_sql, _index).toUpperCase();
+        const _previousWord = _readPreviousUnqualifiedWord(_sql, _index).toUpperCase();
+        if (_previousWord === "ZONE" && /\bAT\s+TIME\s+ZONE\s*$/i.test(_sql.slice(0, _index))) return false;
+        // These words are also legal unquoted column names. Their surrounding
+        // clause determines whether the following question mark is a bind.
+        const _wordStart = _previousIndex - _previousWord.length + 1;
+        const _beforeWord = _readPreviousUnqualifiedWord(_sql, _wordStart).toUpperCase();
+        if (["FIRST", "NEXT"].includes(_previousWord)) return _beforeWord !== "FETCH";
+        if (_previousWord === "BY") return !["ORDER", "GROUP", "PARTITION"].includes(_beforeWord);
+        if (["ROW", "SET", "VALUES"].includes(_previousWord)) return true;
+        if (["BETWEEN", "ROWS"].includes(_previousWord)) {
+          const _beforeIndex = _findPreviousNonSpaceIndex(_sql, _wordStart);
+          const _beforeCharacter = _sql[_beforeIndex] ?? "";
+          if (_previousWord === "ROWS" && _beforeCharacter === "(" &&
+              /^(OVER|AS)$/i.test(_readPreviousUnqualifiedWord(_sql, _beforeIndex))) return false;
+          if (/[,(=+\-*\/<>&|~!%^]/.test(_beforeCharacter) ||
+              /^(SELECT|WHERE|AND|OR|ON|HAVING|WHEN|THEN|ELSE|RETURNING|BY|DISTINCT|ALL)$/.test(_beforeWord)) return true;
+        }
         return !_previousWord || !POSTGRESQL_QUESTION_OPERATOR_PREVIOUS_KEYWORDS.has(_previousWord);
       };
 
-      const _isPostgresqlQuestionMarkOperator = (_sql, _index) => {
+      const _isPostgresqlQuestionMarkOperator = (_sql, _index, _questionKinds) => {
+        if (_sql[_index - 1] === "@" || _sql[_index - 1] === "?" || _sql[_index + 1] === "?") return true;
         const _immediateNextCharacter = _sql[_index + 1] ?? "";
         if (_immediateNextCharacter === "|" || _immediateNextCharacter === "&") {
           return true;
         }
 
-        if (!_hasExpressionBeforeQuestionOperator(_sql, _index)) {
+        if (!_hasExpressionBeforeQuestionOperator(_sql, _index, _questionKinds)) {
           return false;
         }
 
         const _nextIndex = _findNextNonSpaceIndex(_sql, _index);
         const _nextCharacter = _sql[_nextIndex] ?? "";
-        return /[A-Za-z0-9_$'"(@?]/.test(_nextCharacter);
+        return /[A-Za-z0-9_$\u0080-\uffff'"(@?+\-*\/<>=~!#%^&|`]/.test(_nextCharacter);
       };
 
-      const _replacePositionalBindPlaceholders = (_sql, _replace) => {
+      const _replacePositionalBindPlaceholders = (_sql, _replace, _segments) => {
+        // Comments are whitespace for operator/operand classification. Preserve
+        // token lengths so offsets still address the original masked SQL.
+        const _context = _withoutMaskedComments(_sql, _segments);
+        const _questionKinds = new Map();
+        const _operatorContexts = [];
         let _result = "";
         for (let _index = 0; _index < _sql.length; _index += 1) {
-          if (_sql[_index] === "?" && !_isPostgresqlQuestionMarkOperator(_sql, _index)) {
-            _result += _replace();
-            continue;
+          if (_context[_index] === "(") _operatorContexts.push(_readPreviousWord(_context, _index).toUpperCase() === "OPERATOR");
+          if (_context[_index] === ")") _operatorContexts.pop();
+          if (_sql[_index] === "?") {
+            const _operator = Boolean(_operatorContexts.at(-1)) || _isPostgresqlQuestionMarkOperator(_context, _index, _questionKinds);
+            _questionKinds.set(_index, _operator);
+            if (!_operator) { _result += _replace(); continue; }
           }
-
           _result += _sql[_index];
         }
         return _result;
@@ -3067,18 +3632,25 @@ WITH
       const _mergeSqlAndBinds = (_sql, _binds) => {
         const _protectedStore = _maskSqlProtectedSegments(_sql);
         let _workingSql = _protectedStore._masked;
-        const _issues = [];
-        const _requiredNamedCounts = _countNamedPlaceholders(_workingSql);
+        const _issues = [...(_binds._issues ?? [])];
+        const _requiredNamedCounts = _countNamedPlaceholders(_workingSql, _protectedStore._segments);
         const _protectMergedValue = (_value) => {
-          const _token = `@@BindSQL_SEGMENT_${_protectedStore._segments.length}@@`;
+          const _token = `${_protectedStore._segments._prefix}${_protectedStore._segments.length}@@`;
           _protectedStore._segments.push(_value);
-          return _token;
+          return ` ${_token} `;
         };
 
-        for (const [_name, _value] of _binds._named.entries()) {
-          const _result = _replaceNamedBind(_workingSql, _name, _protectMergedValue(_value));
-          _workingSql = _result._nextSql;
+        const _pieces = [];
+        let _cursor = 0;
+        for (const _match of _namedPlaceholders(_workingSql, _protectedStore._segments)) {
+          _pieces.push(_workingSql.slice(_cursor, _match._index));
+          _pieces.push(_binds._named.has(_match._name)
+            ? _protectMergedValue(_binds._named.get(_match._name))
+            : _workingSql.slice(_match._index, _match._index + _match._length));
+          _cursor = _match._index + _match._length;
         }
+        _pieces.push(_workingSql.slice(_cursor));
+        _workingSql = _pieces.join("");
 
         let _placeholderIndex = 0;
         const _usedPositionalIndexes = new Set();
@@ -3092,7 +3664,7 @@ WITH
           const _value = _binds._positional.get(_placeholderIndex);
           _usedPositionalIndexes.add(_placeholderIndex);
           return _protectMergedValue(_value);
-        });
+        }, _protectedStore._segments);
 
         const _missingNamedNames = [..._requiredNamedCounts.keys()].filter((_name) => !_binds._named.has(_name));
         const _extraNamedNames = [..._binds._named.keys()].filter((_name) => !_requiredNamedCounts.has(_name));
@@ -3149,49 +3721,16 @@ WITH
         });
       };
 
-      const _maskPostgresqlCompositeOperators = (_sql) => {
-        const _operators = [];
-        const _masked = _sql.replace(POSTGRESQL_FORMAT_COMPOSITE_OPERATOR_PATTERN, (_operator) => {
-          const _token = `@@BindSQL_OPERATOR_${_operators.length}@@`;
-          _operators.push(_operator);
-          return _token;
-        });
-
-        return { _masked, _operators };
-      };
-
-      const _restorePostgresqlCompositeOperators = (_sql, _operators) =>
-        _sql.replace(/@@BindSQL_OPERATOR_(\d+)@@/g, (_all, _indexText) => {
-          const _index = Number(_indexText);
-          return _operators[_index] ?? "";
-        });
-
-      const _isNumericExponentPlusSign = (_source, _operatorOffset) => {
-        const _left = _source.slice(0, _operatorOffset).trimEnd();
-        const _right = _source.slice(_operatorOffset + 1).trimStart();
-        return /(^|[^A-Za-z0-9_$])(?:[+-]?(?:\d+(?:\.\d*)?|\.\d+)[eE])$/.test(_left) && /^\d/.test(_right);
-      };
-
       const _addSpaceAroundOperators = (_sql) => {
-        const _operatorStore = _maskPostgresqlCompositeOperators(_sql);
-        const _spacedSql = _operatorStore._masked
-          .replace(/\s*\.\s*/g, ".")
-          .replace(/\s*(<>|!=|<=|>=|=|<|>)\s*/g, " $1 ")
-          .replace(/\s*(\+|\/)\s*/g, (_match, _operator, _offset, _source) => {
-            const _operatorOffset = _offset + _match.indexOf(_operator);
-            if (_operator === "+" && _isNumericExponentPlusSign(_source, _operatorOffset)) {
-              return "+";
-            }
-
-            return ` ${_operator} `;
-          })
-          .replace(/(?<=[0-9A-Za-z_)\]])\s*\*\s*(?=[0-9A-Za-z_(\[])/g, " * ")
-          .replace(/\s*\|\|\s*/g, " || ")
-          .replace(/\s*,\s*/g, ", ")
-          .replace(/\s+/g, " ")
-          .trim();
-
-        return _restorePostgresqlCompositeOperators(_spacedSql, _operatorStore._operators);
+        // Consume complete PostgreSQL operator tokens. Splitting >>, #>> or an
+        // extension's operator changes the query, even if the result still parses.
+        return _sql.replace(/@@BindSQL_SEGMENT_X*\d+@@|::|:=|(?:(?!@@BindSQL_SEGMENT_)[+\-*\/<>=~!@#%^&|`?])+/g, (_operator, _offset) => {
+          if (_operator.startsWith("@@BindSQL_SEGMENT_")) return _operator;
+          if (/^[+-]$/.test(_operator) &&
+              /(?:\d+(?:\.\d*)?|\.\d+)[eE]$/.test(_sql.slice(0, _offset)) &&
+              /^\d/.test(_sql.slice(_offset + 1))) return _operator;
+          return ` ${_operator} `;
+        }).replace(/\s*,\s*/g, ", ").replace(/\s+/g, " ").trim();
       };
 
       const _breakBeforeKeyword = (_sql, _keyword, _indent = "") => {
@@ -3206,24 +3745,32 @@ WITH
         });
       };
 
+      const _parenScan = { _source: "", _offset: 0, _contexts: [] };
       const _getOpenParenContexts = (_source, _offset) => {
-        const _contexts = [];
-
-        for (let _index = 0; _index < _offset; _index += 1) {
-          const _character = _source[_index];
-          if (_character === "(") {
-            const _beforeParen = _source.slice(0, _index).trimEnd();
-            const _prefix = _beforeParen.match(/\b[A-Z_][A-Z0-9_$]*(?:\s+[A-Z_][A-Z0-9_$]*){0,2}$/i)?.[0] ?? "";
-            _contexts.push(_prefix.toUpperCase().replace(/\s+/g, " "));
-            continue;
-          }
-
-          if (_character === ")") {
-            _contexts.pop();
+        if (_parenScan._source !== _source || _offset < _parenScan._offset) {
+          _parenScan._source = _source;
+          _parenScan._offset = 0;
+          _parenScan._contexts = [];
+        }
+        for (let _index = _parenScan._offset; _index < _offset; _index += 1) {
+          if (_source[_index] === "(") {
+            let _end = _index;
+            const _words = [];
+            for (let _word = 0; _word < 2; _word += 1) {
+              while (_end > 0 && /\s/.test(_source[_end - 1])) _end -= 1;
+              let _start = _end;
+              while (_start > 0 && _isWordCharacter(_source[_start - 1])) _start -= 1;
+              if (_start === _end) break;
+              _words.push(_source.slice(_start, _end).toUpperCase());
+              _end = _start;
+            }
+            _parenScan._contexts.push(_words[0] === "GROUP" && _words[1] === "WITHIN" ? "WITHIN GROUP" : _words[0] ?? "");
+          } else if (_source[_index] === ")") {
+            _parenScan._contexts.pop();
           }
         }
-
-        return _contexts;
+        _parenScan._offset = _offset;
+        return _parenScan._contexts;
       };
 
       const _isInsideExpressionParentheses = (_source, _offset) =>
@@ -3822,17 +4369,63 @@ WITH
         return _result;
       };
 
+
+      // Formatting may change whitespace and unquoted keyword case only. This
+      // independent lexical check keeps future formatter regressions from changing SQL.
+      function* _sqlLexemes(_sql) {
+        let _index = 0;
+        let _previousLiteral = false;
+        while (_index < _sql.length) {
+          let _newline = false;
+          while (_index < _sql.length && /[ \t\r\n\f]/.test(_sql[_index])) {
+            if (/[\r\n]/.test(_sql[_index])) _newline = true;
+            _index += 1;
+          }
+          if (_index === _sql.length) return;
+          const _protected = _readSqlProtectedSegment(_sql, _index);
+          if (_protected) {
+            const _literal = /^(?:'|[EBXN]'|U&'|\$)/i.test(_protected);
+            if (_previousLiteral && _literal) yield _newline ? "continuation" : "separate-literal";
+            yield `protected:${_protected}`;
+            _previousLiteral = _literal;
+            _index += _protected.length;
+            continue;
+          }
+          _previousLiteral = false;
+          const _tail = _sql.slice(_index);
+          const _word = /^[A-Za-z_\u0080-\uffff][A-Za-z0-9_$\u0080-\uffff]*/.exec(_tail)?.[0];
+          const _number = /^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/.exec(_tail)?.[0];
+          const _operator = /^(?:(?!\/\*|--)[+\-*\/<>=~!@#%^&|`?])+/.exec(_tail)?.[0];
+          const _token = _word ?? _number ?? _operator ?? _sql[_index];
+          yield _word ? `word:${_token.replace(/[A-Z]/g, (_letter) => _letter.toLowerCase())}` :
+            _number ? `number:${_token.toLowerCase()}` : `symbol:${_token}`;
+          _index += _token.length;
+        }
+      }
+
+      const _sameSqlLexemes = (_left, _right) => {
+        const _before = _sqlLexemes(_left);
+        const _after = _sqlLexemes(_right);
+        while (true) {
+          const _a = _before.next(), _b = _after.next();
+          if (_a.done || _b.done) return _a.done === _b.done;
+          if (_a.value !== _b.value) return false;
+        }
+      };
+
       const _formatSql = (_sql) => {
-        const _literalNormalizedSql = _quoteBarePostgresqlDateTimeLiterals(_sql.replace(/\r\n?/g, "\n"));
-        const _protectedStore = _maskSqlProtectedSegments(_literalNormalizedSql);
+        _parenScan._source = "";
+        _parenScan._offset = 0;
+        _parenScan._contexts = [];
+        const _protectedStore = _maskSqlProtectedSegments(_sql, true);
         let _formatted = _protectedStore._masked.replace(/\s+/g, " ").trim();
         if (!_formatted) {
-          return "";
+          return _trimSql(_sql);
         }
 
         _formatted = _addSpaceAroundOperators(_formatted);
         _formatted = _upperCaseKeywords(_formatted);
-        _formatted = _formatted.replace(/\bAS(?=[A-Za-z0-9_"`\[@])/g, "AS ");
+        _formatted = _formatted.replace(/\bAS(?=@@BindSQL_SEGMENT_)/g, "AS ");
 
         if (/\bMERGE\b/.test(_formatted)) {
           for (const _keyword of MERGE_CLAUSE_KEYWORDS) {
@@ -3858,7 +4451,10 @@ WITH
         const _structuredLines = _formatStructuredLines(_formatted);
         const _indentedLines = _applyParenthesisIndent(_structuredLines);
         const _normalizedOutput = _indentedLines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
-        return _restoreSqlProtectedSegments(_normalizedOutput, _protectedStore._segments);
+        const _candidate = _restoreSqlProtectedSegments(_normalizedOutput, _protectedStore._segments);
+        _parenScan._source = "";
+        _parenScan._contexts = [];
+        return _sameSqlLexemes(_sql, _candidate) ? _candidate : _trimSql(_sql);
       };
 
       const _showFlash = (_message, _type = "info", _dedupeKey = "") => {
@@ -3879,21 +4475,28 @@ WITH
         }, FLASH_DURATION_MS);
       };
 
-      const _showCopySuccessState = () => {
-        if (!$copyLabel) {
-          return;
-        }
+      const _setCopyFeedback = (_copied) => {
+        $copyButton.dataset.copied = String(_copied);
+        $copyLabel.setAttribute("aria-hidden", String(_copied));
+        $copySuccess.setAttribute("aria-hidden", String(!_copied));
+        $copyStatus.textContent = _copied ? $copySuccess.textContent : "";
+      };
 
-        $copyLabel.textContent = "コピーしました";
-        if ($copyButton) {
-          $copyButton.classList.add("is-success");
-        }
+      const _resetCopyState = () => {
         window.clearTimeout(_state._copyLabelTimer);
+        _state._copyRequestId += 1;
+        if (!_state._copyBusy) {
+          $copyButton.removeAttribute("aria-busy");
+          $copyButton.removeAttribute("aria-disabled");
+        }
+        _setCopyFeedback(false);
+      };
+
+      const _showCopySuccessState = () => {
+        window.clearTimeout(_state._copyLabelTimer);
+        _setCopyFeedback(true);
         _state._copyLabelTimer = window.setTimeout(() => {
-          $copyLabel.textContent = "コピー";
-          if ($copyButton) {
-            $copyButton.classList.remove("is-success");
-          }
+          _setCopyFeedback(false);
         }, COPY_SUCCESS_DURATION_MS);
       };
 
@@ -3902,6 +4505,9 @@ WITH
         const $previousFocus = document.activeElement;
         const _selectionStart = $previousFocus?.selectionStart;
         const _selectionEnd = $previousFocus?.selectionEnd;
+        const _selectionDirection = $previousFocus?.selectionDirection;
+        const _scrollTop = $previousFocus?.scrollTop;
+        const _scrollLeft = $previousFocus?.scrollLeft;
         $temporary.value = _text;
         $temporary.setAttribute("readonly", "true");
         $temporary.style.position = "fixed";
@@ -3918,74 +4524,106 @@ WITH
           $temporary.remove();
           $previousFocus?.focus({ preventScroll: true });
           if (typeof _selectionStart === "number" && typeof $previousFocus?.setSelectionRange === "function") {
-            $previousFocus.setSelectionRange(_selectionStart, _selectionEnd);
+            $previousFocus.setSelectionRange(_selectionStart, _selectionEnd, _selectionDirection);
+            $previousFocus.scrollTop = _scrollTop;
+            $previousFocus.scrollLeft = _scrollLeft;
           }
         }
       };
 
       const _copyResult = async () => {
+        if (_state._copyBusy) return;
         if (!_state._lastSql) {
           _showFlash(MESSAGES.copyEmpty, "error", "copy-empty");
           return;
         }
 
+        _resetCopyState();
+        const _requestId = _state._copyRequestId;
         const _copiedSql = _state._lastSql;
+        const _isCurrent = () => _requestId === _state._copyRequestId
+          && $copyButton.isConnected && _state._lastSql === _copiedSql;
+        _state._copyBusy = true;
+        _syncActionAvailability();
+        $copyButton.setAttribute("aria-busy", "true");
+        $copyButton.setAttribute("aria-disabled", "true");
         try {
-          await navigator.clipboard.writeText(_copiedSql);
-          if (_state._lastSql === _copiedSql) _showCopySuccessState();
-          return;
-        } catch (_error) {
-          if (_state._lastSql !== _copiedSql) return;
-          const _copied = _copyWithFallback(_copiedSql);
-          if (_copied) {
-            _showCopySuccessState();
-            return;
+          try {
+            await navigator.clipboard.writeText(_copiedSql);
+          } catch (_error) {
+            if (!_isCurrent()) return;
+            if (!_copyWithFallback(_copiedSql)) {
+              _showFlash(MESSAGES.copyFailed, "error", "copy-failed");
+              return;
+            }
           }
+          if (_isCurrent()) _showCopySuccessState();
+        } finally {
+          _state._copyBusy = false;
+          $copyButton.removeAttribute("aria-busy");
+          $copyButton.removeAttribute("aria-disabled");
+          _syncActionAvailability();
         }
-
-        _showFlash(MESSAGES.copyFailed, "error", "copy-failed");
       };
 
       const _syncActionAvailability = () => {
-        $copyButton.disabled = !_state._lastSql;
+        $copyButton.disabled = !_state._lastSql || _state._copyBusy;
         qs('[data-action="clear"]').disabled = !$rawInput.value;
       };
 
-      const _render = () => {
+      const _render = (_force = false) => {
         const _rawText = $rawInput.value;
-        window.clearTimeout(_state._copyLabelTimer);
+        if (!_force && _state._lastRenderedText === _rawText && window.BindSQLValidation.status !== "unavailable") return;
+        _state._lastRenderedText = _rawText;
+        _state._lastSql = "";
+        _syncActionAvailability();
+        _resetCopyState();
         window.clearTimeout(_state._flashTimer);
-        $copyLabel.textContent = "コピー";
-        $copyButton.classList.remove("is-success");
         $flash.classList.remove("is-visible");
         $flash.textContent = "";
         if (!_rawText) _state._lastFlashKey = "";
-        _syncInputHighlight(_rawText);
+        try {
+          _syncInputHighlight(_rawText);
 
-        const _input = _splitInputText(_rawText);
-        const _binds = _parseBindVariables(_input._bindLines);
-        const _sqlText = _input._sqlText;
-        const _merged = _mergeSqlAndBinds(_sqlText, _binds);
-        const _formatted = _formatSql(_merged._sql);
+          const _input = _splitInputText(_rawText);
+          const _binds = _parseBindVariables(_input._bindLines);
+          const _sqlText = _input._sqlText;
+          const _merged = _mergeSqlAndBinds(_sqlText, _binds);
+          const _formatted = _formatSql(_merged._sql);
 
-        if (_merged._issues.length > 0) {
-          window.BindSQLValidation.reset('PostgreSQL 15：バインド変数の変換エラーを解消するとチェックします');
+          if (_merged._issues.length > 0) {
+            window.BindSQLValidation.reset('PostgreSQL 15：バインド変数の変換エラーを解消するとチェックします');
+            _state._lastSql = "";
+            _syncActionAvailability();
+            $output.value = _buildMergeIssueOutput(_merged._issues, _formatted);
+            _showFlash(MESSAGES.mergeError(_merged._issues.join(" ")), "error", `merge:${_merged._issues.join("|")}`);
+            return;
+          }
+
+          _state._lastSql = _formatted;
+          _syncActionAvailability();
+          _renderOutputText(_formatted);
+          window.BindSQLValidation.schedule(_formatted);
+        } catch (_error) {
+          _state._lastRenderedText = null;
           _state._lastSql = "";
           _syncActionAvailability();
-          $output.value = _buildMergeIssueOutput(_merged._issues, _formatted);
-          _showFlash(MESSAGES.mergeError(_merged._issues.join(" ")), "error", `merge:${_merged._issues.join("|")}`);
-          return;
+          window.BindSQLValidation.reset();
+          const _message = MESSAGES.mergeError(String(_error?.message ?? _error));
+          $output.value = _buildMergeIssueOutput([_message], "");
+          _showFlash(_message, "error");
         }
-
-        _state._lastSql = _formatted;
-        _syncActionAvailability();
-        _renderOutputText(_formatted);
-        window.BindSQLValidation.schedule(_formatted);
       };
 
       const _handleInputEvent = (event) => {
         const $target = event.target;
         if ($target instanceof HTMLElement && $target.matches('[data-role="raw-input"]')) {
+          if (event.isComposing || _state._isComposing) {
+            if (!_state._isComposing) _startComposition();
+            _syncInputHighlight($rawInput.value);
+            _syncActionAvailability();
+            return;
+          }
           _render();
           return;
         }
@@ -4010,7 +4648,8 @@ WITH
         const _actionType = $action.getAttribute("data-action");
         if (_actionType === "clear") {
           $rawInput.value = "";
-          _render();
+          _state._isComposing = false;
+          _render(true);
           $rawInput.focus();
           return;
         }
@@ -4020,9 +4659,31 @@ WITH
         }
       };
 
+      const _startComposition = () => {
+        _state._isComposing = true;
+        _state._lastSql = "";
+        _resetCopyState();
+        _syncActionAvailability();
+        window.BindSQLValidation.reset();
+      };
+
       const _bindEvents = () => {
         document.addEventListener("input", _handleInputEvent);
+        document.addEventListener("compositionstart", (_event) => {
+          if (_event.target === $rawInput) _startComposition();
+        });
+        document.addEventListener("compositionend", (_event) => {
+          if (_event.target !== $rawInput) return;
+          _state._isComposing = false;
+          _render(true);
+        });
         document.addEventListener("click", _handleClickEvent);
+        window.addEventListener("pagehide", _resetCopyState);
+        window.addEventListener("pageshow", (_event) => {
+          if (!_event.persisted) return;
+          _state._isComposing = false;
+          _render(true);
+        });
         $rawInput.addEventListener("scroll", _syncInputHighlightScroll);
 
         const _mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
