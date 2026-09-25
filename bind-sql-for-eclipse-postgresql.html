@@ -7,15 +7,6 @@
   <title>BindSQL for Eclipse — PostgreSQL専用</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f97316'/%3E%3Cpath d='M16 20c0-4.4 7.2-8 16-8s16 3.6 16 8-7.2 8-16 8-16-3.6-16-8Zm0 10c0 4.4 7.2 8 16 8s16-3.6 16-8v8c0 4.4-7.2 8-16 8s-16-3.6-16-8v-8Zm0 18c0 4.4 7.2 8 16 8s16-3.6 16-8v-8c0 4.4-7.2 8-16 8s-16-3.6-16-8v8Z' fill='%23fff7ed'/%3E%3C/svg%3E" />
   <style id="gyomu-ui-styles">
-/*! 業務UI / GYOMU-UI 0.6.1 — この単一HTMLに内包する共通スタイル。
- * 外部スタイルシートの読み込みは不要。
- * 利用するアイコンは本文のインラインSVGとして内包。
- * 第三者アイコンの出典とライセンス全文は、このstyle要素の末尾に保持。
- */
-
-/* tokens.css */
-/* Project-owned tokens. Unmarked nested .gm scopes inherit the surrounding colors. */
-/* BEGIN GENERATED COLORS — scripts/build-tokens.cjs */
 .gm:where(:not(.gm .gm)), .gm[data-mode="light"] {
   color-scheme: light;
   --gm-on-brand: #ffffff;
@@ -84,7 +75,7 @@
   --gm-focus: var(--gm-light-focus, #174da7) !important;
 }
 }
-/* END GENERATED COLORS */
+
 .gm {
   --gm-font: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   --gm-text-size: .875rem;
@@ -122,12 +113,10 @@
 @media (pointer: coarse) {.gm[data-density="compact"] {--gm-control-height:2.75rem;--gm-cell-block:.75rem;}}
 @media (any-pointer: coarse) {.gm {--gm-control-xs-height:2.75rem;--gm-control-xs-text-size:1rem;--gm-control-xs-line-height:1.5rem;--gm-control-xs-icon-size:1.25rem;--gm-control-xs-arrow-size:1.25rem;}}
 
-/* components.css */
-/* All icons are official inline SVG elements supplied by the HTML or icon renderer. */
 .gm {font-family:var(--gm-font);font-size:var(--gm-text-size);line-height:1.65;color:var(--gm-text);background:var(--gm-surface);}
 .gm *, .gm *::before, .gm *::after {box-sizing:border-box;}
 .gm [hidden] {display:none!important;}
-/* Touch the edge by default; existing frames and filled controls are handled by the shared preset. */
+
 .gm :focus-visible {outline-width:2px;outline-style:solid;outline-color:var(--gm-focus);outline-offset:0;}
 .gm a {color:var(--gm-brand);text-underline-offset:.2em;}
 .gm button,.gm input,.gm select,.gm textarea {font:inherit;color:inherit;}
@@ -255,10 +244,10 @@
 .gm .gm-table th button .gm-icon {margin-inline-start:.25rem;}
 .gm .gm-table .gm-link {padding-block:0;min-height:var(--gm-choice-target);}
 .gm .gm-mode-toggle {position:relative;display:inline-flex;vertical-align:middle;}
-/* Keep the SVG out of inline text layout: its baseline otherwise shifts it inside this fixed slot. */
+
 .gm .gm-mode-icon {display:flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;line-height:0;flex:none;}
 .gm .gm-mode-icon > .gm-icon {display:block;width:100%;height:100%;}
-/* Auxiliary controls use a separate size from business form density. */
+
 .gm .gm-btn[data-size="xs"],.gm .gm-input[data-size="xs"],.gm .gm-select-wrap[data-size="xs"] > .gm-select {min-height:var(--gm-control-xs-height);padding:var(--gm-control-xs-padding-block) var(--gm-control-xs-padding-inline);font-size:var(--gm-control-xs-text-size);line-height:var(--gm-control-xs-line-height);}
 .gm .gm-select-wrap[data-size="xs"] {--gm-select-arrow-size:var(--gm-control-xs-arrow-size);--gm-select-arrow-inset:.5rem;--gm-select-text-inset:calc(var(--gm-select-arrow-size) + var(--gm-select-arrow-inset) + var(--gm-select-text-gap));}
 .gm .gm-select-wrap[data-size="xs"] > .gm-select {padding-inline-end:var(--gm-select-text-inset);}
@@ -274,7 +263,7 @@
 @media(prefers-reduced-motion:reduce) {.gm * {scroll-behavior:auto!important;}}
 @media print {.gm .gm-btn,.gm .gm-search-panel,.gm .gm-pagination,.gm .gm-bulk,.gm .gm-skip{display:none!important;}.gm .gm-table-scroll{overflow:visible;}.gm .gm-table{min-width:0;}.gm .gm-panel{border:0;padding:0;}.gm .gm-detail dt{print-color-adjust:exact;}}
 .gm .gm-btn > .gm-icon {width:1rem;height:1rem;}
-/* Lists share a compact toolbar, bounded viewport and persistent pager. */
+
 .gm .gm-data-grid {min-width:0;border:1px solid var(--gm-border);border-radius:var(--gm-radius);background:var(--gm-surface);}
 .gm .gm-data-grid .gm-table-toolbar {position:relative;margin:0;padding:8px;}
 .gm .gm-grid-tools,.gm .gm-page-size,.gm .gm-page-navigation,.gm .gm-page-numbers {display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-width:0;}
@@ -326,8 +315,6 @@
 @media(pointer:coarse) {.gm .gm-column-resize{width:44px;min-height:44px;}.gm .gm-column-settings > summary{min-width:44px;min-height:44px;}}
 @media print {.gm .gm-grid-tools,.gm .gm-column-resize{display:none!important;}.gm .gm-data-grid .gm-table-scroll{max-height:none!important;overflow:visible;}.gm .gm-data-grid .gm-table{min-width:0!important;}.gm .gm-data-grid .gm-table th{position:static!important;}}
 
-/* BEGIN GENERATED BUSINESS PRESET */
-/* 業務UIの標準プリセット。remはルート16pxの場合の値。ページ全体のルート文字サイズは変更しない。 */
 .gm {
   --gm-text-size: .875rem;
   --gm-label-size: .8125rem;
@@ -363,7 +350,6 @@
 .gm .gm-option {min-height:var(--gm-control-height);padding:var(--gm-control-padding-block) var(--gm-control-padding-inline);}
 .gm .gm-file-input::file-selector-button {min-height:var(--gm-control-height);padding-block:var(--gm-control-padding-block);}
 
-/* Text may grow and wrap; minimum target size does not require oversized visual icons. */
 .gm {overflow-wrap:anywhere;}
 .gm :where(.gm-btn,.gm-link,.gm-tab,.gm-tabs button,.gm-table th button,.gm-popover>summary) {min-width:24px;min-height:24px;}
 .gm .gm-btn,.gm .gm-tab {min-height:var(--gm-control-height);}
@@ -384,15 +370,14 @@
 .gm .gm-mode-tooltip,.gm .gm-tooltip-content {white-space:normal;overflow-wrap:anywhere;}
 .gm .gm-input-line>.gm-input {flex-basis:12rem;}
 .gm :focus-visible,.gm [id] {scroll-margin-block:var(--gm-scroll-offset);}
-/* A single 2px stroke replaces an existing frame without changing border width or layout. */
+
 .gm :is(.gm-input,.gm-select,.gm-textarea,.gm-btn,.gm-table-scroll,.gm-tab-panel):focus-visible,
 .gm .gm-switch input:focus-visible {outline-offset:-2px;}
-/* Filled surfaces need an internal contrasting stroke, not the brand color on itself.
-   The 1px outer rim is the unchanged fill, not an extra outline. */
+
 .gm .gm-btn.gm-btn-primary:focus-visible {outline-color:var(--gm-on-brand);outline-offset:-3px;}
 .gm .gm-btn.gm-btn-danger:focus-visible {outline-color:var(--gm-on-error);outline-offset:-3px;}
 .gm .gm-switch input:checked:focus-visible {outline-color:var(--gm-on-brand);outline-offset:-3px;}
-/* The quiet variant has a transparent surface even when a semantic button class is present. */
+
 .gm .gm-btn[data-variant="quiet"]:focus-visible {outline-color:var(--gm-focus);outline-offset:-2px;}
 .gm .gm-table-scroll,.gm .gm-popup,.gm .gm-multi-list,.gm .gm-dialog {scroll-padding:1rem;}
 .gm .gm-option[data-active="true"] {outline:2px solid var(--gm-focus);outline-offset:-2px;}
@@ -424,9 +409,7 @@
 @media (prefers-reduced-motion:reduce) {
   .gm,.gm *,.gm *::before,.gm *::after {scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important;}
 }
-/* END GENERATED BUSINESS PRESET */
 
-/* extended.css */
 .gm .gm-btn[data-size="sm"] {min-height:1.75rem;padding:.125rem .5rem;}
 .gm .gm-copy-control {display:inline-block;max-width:100%;vertical-align:middle;}
 .gm .gm-copy-button {max-width:100%;}
@@ -501,8 +484,6 @@
 
 @media(any-pointer:coarse) {.gm .gm-tab,.gm .gm-switch,.gm .gm-segments label,.gm .gm-option,.gm .gm-menu button,.gm .gm-shell-nav a,.gm .gm-tree summary,.gm .gm-tree a {min-height:44px;min-width:44px;}.gm .gm-file-input::file-selector-button {min-height:44px;}}
 
-/* utilities.css */
-/* Optional, scoped utility classes. Include after component styles. */
 .gm .gm-p-1 { padding:var(--gm-space-1); }
 .gm .gm-px-1 { padding-inline:var(--gm-space-1); }
 .gm .gm-py-1 { padding-block:var(--gm-space-1); }
@@ -585,226 +566,9 @@
   .gm .lg\:gm-grid-cols-4 {grid-template-columns:repeat(4,minmax(0,1fr));}
 }
 
-/* Fixed column utilities collapse at narrow widths; responsive variants remain explicit. */
 @media(max-width:560px) {.gm .gm-grid-cols-2,.gm .gm-grid-cols-3{grid-template-columns:minmax(0,1fr);}.gm .gm-col-span-2{grid-column:auto;}}
-
-
-/*!
-Third-party icon attribution
-Material Symbols Outlined / Google
-Source: https://github.com/google/material-design-icons
-Commit: 40a7a292a79d9394157e1ea24f83d52d5e17c556
-Modified: CSS examples add class, sizing, currentColor and accessibility attributes to inline SVG; original path coordinates and viewBox preserved.
-No NOTICE file at the pinned repository root.
-The following license applies to the third-party icon data only; it does not relicense the UI stylesheet.
-
-
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
-
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-
-   1. Definitions.
-
-      "License" shall mean the terms and conditions for use, reproduction,
-      and distribution as defined by Sections 1 through 9 of this document.
-
-      "Licensor" shall mean the copyright owner or entity authorized by
-      the copyright owner that is granting the License.
-
-      "Legal Entity" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under common
-      control with that entity. For the purposes of this definition,
-      "control" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-      outstanding shares, or (iii) beneficial ownership of such entity.
-
-      "You" (or "Your") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
-
-      "Source" form shall mean the preferred form for making modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
-
-      "Object" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
-
-      "Work" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below).
-
-      "Derivative Works" shall mean any work, whether in Source or Object
-      form, that is based on (or derived from) the Work and for which the
-      editorial revisions, annotations, elaborations, or other modifications
-      represent, as a whole, an original work of authorship. For the purposes
-      of this License, Derivative Works shall not include works that remain
-      separable from, or merely link (or bind by name) to the interfaces of,
-      the Work and Derivative Works thereof.
-
-      "Contribution" shall mean any work of authorship, including
-      the original version of the Work and any modifications or additions
-      to that Work or Derivative Works thereof, that is intentionally
-      submitted to Licensor for inclusion in the Work by the copyright owner
-      or by an individual or Legal Entity authorized to submit on behalf of
-      the copyright owner. For the purposes of this definition, "submitted"
-      means any form of electronic, verbal, or written communication sent
-      to the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of, the
-      Licensor for the purpose of discussing and improving the Work, but
-      excluding communication that is conspicuously marked or otherwise
-      designated in writing by the copyright owner as "Not a Contribution."
-
-      "Contributor" shall mean Licensor and any individual or Legal Entity
-      on behalf of whom a Contribution has been received by Licensor and
-      subsequently incorporated within the Work.
-
-   2. Grant of Copyright License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute the
-      Work and such Derivative Works in Source or Object form.
-
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have made,
-      use, offer to sell, sell, import, and otherwise transfer the Work,
-      where such license applies only to those patent claims licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If You
-      institute patent litigation against any entity (including a
-      cross-claim or counterclaim in a lawsuit) alleging that the Work
-      or a Contribution incorporated within the Work constitutes direct
-      or contributory patent infringement, then any patent licenses
-      granted to You under this License for that Work shall terminate
-      as of the date such litigation is filed.
-
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
-
-      (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
-
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
-
-      (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
-
-      (d) If the Work includes a "NOTICE" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
-
-      You may add Your own copyright statement to Your modifications and
-      may provide additional or different license terms and conditions
-      for use, reproduction, or distribution of Your modifications, or
-      for any such Derivative Works as a whole, provided Your use,
-      reproduction, and distribution of the Work otherwise complies with
-      the conditions stated in this License.
-
-   5. Submission of Contributions. Unless You explicitly state otherwise,
-      any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
-      with Licensor regarding such Contributions.
-
-   6. Trademarks. This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
-
-   7. Disclaimer of Warranty. Unless required by applicable law or
-      agreed to in writing, Licensor provides the Work (and each
-      Contributor provides its Contributions) on an "AS IS" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-      implied, including, without limitation, any warranties or conditions
-      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
-      PARTICULAR PURPOSE. You are solely responsible for determining the
-      appropriateness of using or redistributing the Work and assume any
-      risks associated with Your exercise of permissions under this License.
-
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and grossly
-      negligent acts) or agreed to in writing, shall any Contributor be
-      liable to You for damages, including any direct, indirect, special,
-      incidental, or consequential damages of any character arising as a
-      result of this License or out of the use or inability to use the
-      Work (including but not limited to damages for loss of goodwill,
-      work stoppage, computer failure or malfunction, or any and all
-      other commercial damages or losses), even if such Contributor
-      has been advised of the possibility of such damages.
-
-   9. Accepting Warranty or Additional Liability. While redistributing
-      the Work or Derivative Works thereof, You may choose to offer,
-      and charge a fee for, acceptance of support, warranty, indemnity,
-      or other liability obligations and/or rights consistent with this
-      License. However, in accepting such obligations, You may act only
-      on Your own behalf and on Your sole responsibility, not on behalf
-      of any other Contributor, and only if You agree to indemnify,
-      defend, and hold each Contributor harmless for any liability
-      incurred by, or claims asserted against, such Contributor by reason
-      of your accepting any such warranty or additional liability.
-
-   END OF TERMS AND CONDITIONS
-
-   APPENDIX: How to apply the Apache License to your work.
-
-      To apply the Apache License to your work, attach the following
-      boilerplate notice, with the fields enclosed by brackets "[]"
-      replaced with your own identifying information. (Don't include
-      the brackets!)  The text should be enclosed in the appropriate
-      comment syntax for the file format. We also recommend that a
-      file or class name and description of purpose be included on the
-      same "printed page" as the copyright notice for easier
-      identification within third-party archives.
-
-   Copyright [yyyy] [name of copyright owner]
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
   </style>
   <style id="bindsql-layout">
-/* BindSQL layout adapter. GYOMU-UI 0.6.1 compact handoff CSS is embedded unchanged above. */
 html.gm {
   height: 100%;
   --editor-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
@@ -887,7 +651,6 @@ body {
 .gm .field { display: grid; grid-template-rows: minmax(0, 1fr); min-height: 0; min-width: 0; }
 .gm .input-editor { position: relative; min-height: 0; min-width: 0; background: var(--gm-surface); border-radius: var(--gm-radius); }
 
-/* Both layers share all text metrics so caret, selection and highlight align. */
 .gm .input-editor__highlight,
 .gm .textarea,
 .gm .output {
@@ -937,7 +700,6 @@ body {
 .gm .sql-token--number { color: var(--gm-success); }
 .gm .sql-token--comment { color: var(--gm-muted); font-style: normal; }
 
-/* Keep all existing action controls at 30px (with a 16px root font). */
 .gm .gm-btn {
   --gm-control-height: 1.875rem;
   --gm-control-xs-height: 1.875rem;
@@ -954,7 +716,6 @@ body {
 .gm .gm-copy-button[data-copied="true"]:focus-visible { outline-color: var(--gm-success); }
 .gm .button__icon, .gm .button__icon * { pointer-events: none; }
 
-/* Reuse the existing checkbox; no controls or visible labels are added. */
 .gm .mode-toggle { flex: none; }
 .gm .switch { position: relative; cursor: pointer; }
 .gm .switch input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
@@ -1027,13 +788,9 @@ body {
   .gm .output { min-height: 80vh; white-space: pre-wrap; }
   .gm .validation { max-height: none; overflow: visible; }
 }
-
   </style>
 </head>
 <body>
-  <!-- Material Symbols Outlined SVGs from the supplied GYOMU-UI 0.6.1.
-       Original paths and viewBox preserved; classes and sizes adapted.
-       Attribution and full Apache-2.0 license are in gyomu-ui-styles. -->
   <header class="app-bar">
     <h1 class="app-title"><span>BindSQL for Eclipse</span><span class="app-title__database">PostgreSQL専用</span></h1>
     <div class="mode-toggle">
@@ -4704,6 +4461,217 @@ WITH
       _init();
     })();
   </script>
+<script id="material-symbols-licenses" type="text/plain">
+Third-party icon attribution
+Material Symbols Outlined / Google
+Source: https://github.com/google/material-design-icons
+Commit: 40a7a292a79d9394157e1ea24f83d52d5e17c556
+Modified: Inline SVGs use app-specific classes, sizing, currentColor and accessibility attributes; original path coordinates and viewBox preserved.
+The following license applies to the third-party icon data only.
+
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+</script>
 </body>
 </html>
 <!--
