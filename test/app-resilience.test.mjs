@@ -49,7 +49,7 @@ test('unexpected conversion exceptions invalidate the old output and recover on 
 
 test('a formatter regression cannot silently change SQL tokens', () => {
   const app = createApp({ transformSource: text => text.replace(
-    '_restoreSqlProtectedSegments(_normalizedOutput, _protectedStore._segments)',
+    /_restoreSqlProtectedSegments\(\s*_normalizedOutput,\s*_protectedStore\._segments\s*\)/,
     '"SELECT 99;"'
   ) });
   assert.equal(app.input('select 1;'), 'select 1;');

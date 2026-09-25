@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import { formatHtml } from './format-html.mjs';
 
 const require = createRequire(import.meta.url);
 const root = new URL('../', import.meta.url);
@@ -37,7 +38,7 @@ for (const text of [loader, worker, licenses]) {
 }
 const pattern = /<!-- BEGIN POSTGRESQL VALIDATOR[^]*?<!-- END POSTGRESQL VALIDATOR -->/;
 if (!pattern.test(html)) throw new Error('Missing validator bundle markers');
-const output = html.replace(pattern, () => block);
+const output = await formatHtml(html.replace(pattern, () => block));
 if (process.argv.includes('--check')) {
   if (output !== html) throw new Error(`Validator bundle is stale; run npm run build:validator -- --target ${targetName}`);
 } else {

@@ -2,10 +2,13 @@
   "name": "bindsql-for-eclipse",
   "private": true,
   "scripts": {
+    "format": "node scripts/format-html.mjs",
+    "format:check": "node scripts/format-html.mjs --check",
     "build:validator": "node scripts/build-validator.mjs",
     "test": "node --test test/*.test.mjs"
   },
   "devDependencies": {
-    "libpg-query": "15.6.3"
+    "libpg-query": "15.6.3",
+    "prettier": "3.6.2"
   }
 }
