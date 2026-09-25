@@ -63,6 +63,6 @@ npm run build:validator
 npm test
 ```
 
-HTMLの空行・インデント・CSS・JavaScriptの書式は、`npm run format` で統一できます。`npm run format:check` で確認します。埋め込み済みの外部コード・WASMはそのまま保持します。
+HTMLの空行・インデント・CSS・JavaScriptの書式は、`npm run format` で統一できます。埋め込みWorker内のJavaScriptも整形対象です。`npm run format:check` で確認します。WASMデータは変更しません。
 
 検査処理は `src/sql-validation-worker-business.js`、組み込み処理は `scripts/build-validator.mjs` です。生成されたHTMLも更新してください。依存ライブラリはビルド時にのみ利用し、利用時のネットワーク接続はCSPでも禁止しています。

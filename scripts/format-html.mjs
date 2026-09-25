@@ -7,6 +7,9 @@ export async function formatHtml(html) {
   const template = html.replace(
     /<script\b[^>]*type="(?:text\/plain|application\/octet-stream)"[^>]*>[\s\S]*?<\/script>/g,
     block => {
+      if (block.includes('id="postgresql-validator-worker"')) {
+        return block.replace('type="text/plain"', 'type="text/javascript"');
+      }
       const index = embedded.push(block) - 1;
       return `<!-- BINDSQL_EMBEDDED_${index} -->`;
     }
@@ -18,9 +21,16 @@ export async function formatHtml(html) {
     trailingComma: 'none'
   });
   return formatted.replace(
+    'id="postgresql-validator-worker" type="text/javascript"',
+    'id="postgresql-validator-worker" type="text/plain"'
+  ).replace(
     /^([ \t]*)<!-- BINDSQL_EMBEDDED_(\d+) -->/gm,
     (_, indent, index) => {
       const block = embedded[Number(index)];
+      if (block.includes('type="application/octet-stream"')) {
+        const [, opening, content] = block.match(/^(<script\b[^>]*>)([\s\S]*?)<\/script>$/);
+        return `${indent}${opening}\n${indent}  ${content.trim()}\n${indent}</script>`;
+      }
       return indent + block.replace(/\n[ \t]*<\/script>$/, `\n${indent}</script>`);
     }
   );
