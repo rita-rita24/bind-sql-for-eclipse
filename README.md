@@ -55,14 +55,33 @@ MIT License
 
 ## 開発・検証
 
-利用時のインストールやビルドは不要です。解析器や検査処理を変更する場合のみ、Node.js 20以降で以下を実行してください。
+利用時のインストールやビルドは不要です。開発時はNode.js 20以降で以下を実行してください。
 
 ```sh
 npm ci --ignore-scripts
-npm run build:validator
+npm run build
 npm test
+npm run format:check
 ```
 
-HTMLの空行・インデント・CSS・JavaScriptの書式は、`npm run format` で統一できます。埋め込みWorker内のJavaScriptも整形対象です。`npm run format:check` で確認します。WASMデータは変更しません。
+`src/` を編集し、`npm run build` で配布HTMLを再生成します。配布HTMLは直接編集しないでください。
 
-検査処理は `src/sql-validation-worker-business.js`、組み込み処理は `scripts/build-validator.mjs` です。生成されたHTMLも更新してください。依存ライブラリはビルド時にのみ利用し、利用時のネットワーク接続はCSPでも禁止しています。
+| ファイル | 役割 |
+| --- | --- |
+| `src/index.html` | 画面の構造・CSSとスクリプトの埋め込み位置 |
+| `src/styles.css` | テーマ・レイアウト・各部品のスタイル（CSSネストを使用） |
+| `src/sql-engine.js` | DOMに依存しないSQL入力の解釈・バインド展開・整形・ハイライト |
+| `src/bindsql-app.js` | 入出力の表示・コピー・テーマ・入力イベントの制御 |
+| `src/sql-validation-ui.js` | 検査の予約・Workerの管理・診断の表示 |
+| `src/sql-validation-worker.js` | PostgreSQL解析器の呼び出し・構造の検査 |
+| `scripts/build.mjs` | CSS・自作スクリプト・解析器・WASMを単一HTMLへ組み込み |
+
+`npm run format` は `src/` と `scripts/` の書式を統一し、配布HTMLも更新します。`npm run format:check` は書式と配布HTMLの一致を確認します。`npm run build:check` では再生成が必要かだけを確認できます。WASMの内容は変更しません。
+
+CSSはネイティブのネスト構文を使用しています。各部品の状態・メディアクエリをその部品のルール内にまとめ、配色とサイズは `:root` のカスタムプロパティで管理します。利用にはCSSネストに対応したモダンブラウザが必要です。
+
+入出力とハイライトの文字サイズ・余白は共通の `.editor` で管理し、入力欄とハイライトは同じグリッド領域に重ねています。片方だけのサイズ変更は表示位置のずれにつながるため、共通スタイルを変更してください。画面のイベントは各操作要素に直接登録し、空の出力案内にはHTMLの `placeholder` を使います。
+
+`BindSQLEngine.convert(text)` は `{ sql, issues }` を返し、`highlight(text)` はHTMLエスケープ済みの表示用文字列を返します。変換処理はDOMやブラウザAPIがない環境でも利用できます。キーワード辞書はPostgreSQL 15向けに統一しています。
+
+テストは配布HTMLに埋め込まれたスクリプトを実行し、SQLの意味の保持、コピー・IME・検査のキャンセル、WorkerとWASMのオフライン動作、ソースからの再生成結果を確認します。変更したソースと生成されたHTMLを一緒に更新してください。依存ライブラリはビルド時にのみ利用し、利用時のネットワーク接続はCSPでも禁止しています。
